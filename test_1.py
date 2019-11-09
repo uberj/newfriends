@@ -7,18 +7,18 @@ class Test64(unittest.TestCase):
 
     def test_tb_to_octets1(self):
         h = int("010011010110000101101110", 2)
-        self.assertEqual(tb_to_sextet(h), [19, 22, 5, 46])
+        self.assertEqual(int_to_sextet(h), [19, 22, 5, 46])
 
     def test_hex_to_triple_bytes1(self):
         h = "4d"
-        self.assertEqual(hex_to_triple_bytes(h), [77])
+        self.assertEqual(hex_to_ints(h), [77])
 
     def test_hex_to_triple_bytes2(self):
         h = "4d616e"
         f = "4d616d"
         e = "000000"
-        self.assertEqual(hex_to_triple_bytes(h), [5071214])
-        self.assertEqual(hex_to_triple_bytes(h+f+e), [5071214, 5071213, 0])
+        self.assertEqual(hex_to_ints(h), [5071214])
+        self.assertEqual(hex_to_ints(h+f+e), [5071214, 5071213, 0])
 
     def test_wikipedia_example(self):
         hex = "4d616e"
