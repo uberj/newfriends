@@ -1,6 +1,7 @@
 import unittest
 
 from util import *
+from bitstring import BitArray as BA
 
 
 class Test64(unittest.TestCase):
@@ -69,5 +70,11 @@ class Test64(unittest.TestCase):
         l = xor(buff0, buff1)
         self.assertEqual(ints_to_hex(l), expected, "Should be " + expected)
 
-if __name__ == '__mai__':
-    unittest.main()
+    def test_example_with_library(self):
+        hex = BA("0x1c0111001f010100061a024b53535009181c")
+        xorv = BA("0x686974207468652062756c6c277320657965")
+        expected = "746865206b696420646f6e277420706c6179"
+
+        v = hex ^ xorv
+
+        self.assertEqual(v.hex, expected, "Should be " + expected)
