@@ -6,11 +6,6 @@ from util import *
 import math
 from bitstring import BitArray as BA
 
-def str_to_ba(i:str) -> BA:
-	h = "0x"
-	for c in i:
-		h += hex(ord(c))
-	return BA(h)
 
 def xor_cycle_encrypt(key:BA, m:BA) -> BA:
 	e = key * math.ceil(float(len(m))/len(key))

@@ -1,7 +1,6 @@
 import unittest
 import math
 
-from pprint import pprint
 from util import *
 from bitstring import BitArray as BA
 
@@ -67,5 +66,4 @@ class Test64(unittest.TestCase):
 		# I guess assume these people are thinking in C
 		# Single char is 1 byte (8 bit)
 		e = BA("0x1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736")
-		print(find_best_message(e))
-		# "Cooking MC's like a pound of bacon"
+		self.assertEqual("Cooking MC's like a pound of bacon", find_best_message(e))

@@ -1,4 +1,6 @@
 import string
+import math
+
 from bitstring import BitArray as BA
 
 
@@ -130,3 +132,36 @@ def dictionary_word_count(candidate:BA):
 
 def to_str(candidate: BA) -> str:
 	return "".join([chr(b) for b in candidate.bytes])
+
+
+def str_to_ba(i:str) -> BA:
+	h = "0x"
+	for c in i:
+		h += hex(ord(c))
+	return BA(h)
+
+
+VALID_LETTERS = set(string.ascii_letters)
+
+
+def valid_letter_count_percentage(candidate:BA) -> float:
+	count = 0
+	for c in candidate.bytes:
+		if chr(c) in VALID_LETTERS:
+			count += 1
+	return float(count) / len(candidate.bytes)
+
+
+def realistic_letter_distribution(candidate:BA) -> float:
+	s = to_str(candidate).lower()
+
+	score = 0
+	uniq_chars = set(s)
+	for c in uniq_chars:
+		num_c_in_s = len(list(filter(lambda x: x == c, s)))
+		p_c = (num_c_in_s / len(s)) * 100
+		if c in LETTER_FREQ:
+			t = math.fabs(LETTER_FREQ.get(c) - p_c)
+			score += 1/t
+
+	return score / len(uniq_chars)
