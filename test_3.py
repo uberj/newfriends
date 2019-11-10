@@ -1,6 +1,9 @@
 import unittest
+import math
 
+from pprint import pprint
 from util import *
+from bitstring import BitArray as BA
 
 
 def duplicate_to_int(d):
@@ -20,21 +23,45 @@ def int_to_chars(i):
 	]
 
 
+def candidate_score(candidate):
+	counts = {}
+	for b in candidate.bytes:
+		s = chr(b)
+		counts.setdefault(s, 0)
+		counts[s] += 1
+
+	distro = {}
+	for l, c in counts.items():
+		distro[l] = float(c) / len(candidate.bytes)
+
+	total_error = 0
+	for l, freq in distro.items():
+		if l not in LETTER_FREQ:
+			total_error += 1
+			continue
+		total_error += math.fabs(freq - LETTER_FREQ.get(l))
+
+	return total_error / len(distro.items())
+
+
+def to_str(candidate):
+	return "".join([chr(b) for b in candidate.bytes])
+
+
 class Test64(unittest.TestCase):
 	def test_simple_zeros(self):
 		# I guess assume these people are thinking in C
 		# Single char is 1 byte (8 bit)
-		e = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
-		bs = hex_to_ints(e)
-		for d in range(0, 2 ** 8):  # Just a guess that its one of these
-			bs = hex_to_ints(e)
-			buffD = [duplicate_to_int(d)] * len(bs)
-			de = xor(buffD, bs)
-			chars = []
-			for i in de:
-				to_chars = int_to_chars(i)
-				chars += to_chars
-			try:
-				print("".join(chars))
-			except:
-				continue
+		e = BA("0x1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736")
+		scores = []
+		for c in string.ascii_letters:
+			i = ord(c)
+			key = BA(hex(i)) * int((len(e) / 8))
+			if len(key) < len(e):
+				key = key * 2
+			candidate = (e ^ key)
+
+			scores.append((candidate_score(candidate), to_str(candidate)))
+
+		pprint(sorted(scores, key=lambda x: x[0])[-1][1])
+		# "Cooking MC's like a pound of bacon"
