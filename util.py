@@ -1,9 +1,9 @@
 import string
 
-c_to_a_64_ = list(string.ascii_uppercase) \
-            + list(string.ascii_lowercase) \
-            + list(string.digits) \
-            + ["+", "/"]
+ALL_CHARS_BASE64 = list(string.ascii_uppercase) \
+                   + list(string.ascii_lowercase) \
+                   + list(string.digits) \
+                   + ["+", "/"]
 
 
 def ints_to_hex(ints:[int]) -> str:
@@ -54,7 +54,7 @@ def hex_to_base64(hex_s:str) -> str:
 	for i in ints:
 		sextets = int_to_sextet(i)
 		for sext in sextets:
-			s += c_to_a_64_[sext]
+			s += ALL_CHARS_BASE64[sext]
 
 	return s
 
