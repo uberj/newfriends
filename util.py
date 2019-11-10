@@ -1,4 +1,5 @@
 import string
+from bitstring import BitArray as BA
 
 
 LETTER_FREQ = {
@@ -108,3 +109,24 @@ def xor(buff0:[int], buff1:[int]) -> [int]:
 		r.append(i0 ^ i1)
 	return r
 
+
+def word_dictionary():
+	with open("/usr/share/dict/words", "r") as fd:
+		return set([word.strip() for word in fd.readlines()])
+
+
+WORD_DICTIONARY = word_dictionary()
+
+
+def dictionary_word_count(candidate:BA):
+	s = to_str(candidate)
+	count = 0
+	split = s.split(" ")
+	for word in split:
+		if word in WORD_DICTIONARY:
+			count += 1
+	return float(count) / len(split)
+
+
+def to_str(candidate: BA) -> str:
+	return "".join([chr(b) for b in candidate.bytes])
