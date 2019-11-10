@@ -7,7 +7,7 @@ class Test64(unittest.TestCase):
     def test_simple_zeros(self):
         hex = "0000"
         xorv = "ffff"
-        expected = "0000"
+        expected = "ffff"
 
         buff0 = hex_to_ints(hex)
         buff1 = hex_to_ints(xorv)
