@@ -36,19 +36,11 @@ def xor_encrypt(key_text, ms) -> str:
 class Test64(unittest.TestCase):
 	def test_example(self):
 		x = "Burning 'em, if you ain't quick and nimble\r\nI go crazy when I hear a cymbal"
-		# x = "Burning 'em, if you ain't quick and nimble"
-		# x = "I go crazy when I hear a cymbal"
 		e = xor_encrypt("ICE", x)
-		print(e)
-		a_ = "0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f"
-		print(a_)
+		# a_ = "0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f"
+		a_ =   "0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20930a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f"
 		self.assertEqual(e, a_)
-		# expected = "0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f"
-		# print(expected)
-		# self.assertEqual(e, expected)
 
 if __name__ == "__main__":
 	key = sys.argv[1]
-	fn = sys.argv[2]
-	with open(fn, "r") as fd:
-		print(xor_encrypt(key, fd.read()))
+	print(xor_encrypt(key, sys.stdin.read()))
