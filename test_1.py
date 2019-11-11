@@ -1,4 +1,5 @@
 import unittest
+import base64
 
 from thecode import *
 
@@ -29,6 +30,13 @@ class Test64(unittest.TestCase):
         hex = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"
         expected = "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t"
         self.assertEqual(hex_to_base64(hex), expected, "Should be " + expected)
+
+    def test_example_with_library(self):
+	    pass
+        # hex = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d"
+        # expected = "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t"
+        # base64.b44
+        # self.assertEqual(base64.b64encode(hex), expected, "Should be " + expected)
 
 if __name__ == '__mai__':
     unittest.main()
