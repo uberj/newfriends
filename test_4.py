@@ -6,8 +6,13 @@ from thecode import *
 from bitstring import BitArray as BA
 
 
+def best_decrypt_key(e:BA) -> (int, chr, str):
+	scores = attempt_all_keys(e)
+	l = list(reversed(sorted(scores, key=lambda x: x[0])))
+	return l[0]
 
-def score_message(e:BA) -> [(int, str)]:
+
+def attempt_all_keys(e:BA) -> [(int, chr, str)]:
 	scores = []
 	for i in range(256):
 		key = BA(hex(i)) * int((len(e) / 8))
@@ -15,7 +20,7 @@ def score_message(e:BA) -> [(int, str)]:
 			key = key * 2
 		candidate = (e ^ key)
 
-		scores.append((realistic_letter_distribution(candidate), to_str(candidate)))
+		scores.append((realistic_letter_distribution(candidate), chr(i), to_str(candidate)))
 
 	return scores
 
@@ -34,10 +39,15 @@ class Test64(unittest.TestCase):
 		# I guess assume these people are thinking in C
 		# Single char is 1 byte (8 bit)
 		scores = []
+		blocks = []
 		with open("4.txt", "r") as fd:
 			for line in fd.readlines():
 				ba = BA("0x" + line.strip())
-				scores += score_message(ba)
+				blocks.append(ba)
+
+		for block in blocks:
+			score, key, message = best_decrypt_key(block)
+			scores.append((score, message))
 
 		# print("Top 20:")
 		# pprint(list(reversed(sorted(scores, key=lambda x: x[0])))[:20])
