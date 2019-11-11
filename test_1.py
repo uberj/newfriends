@@ -1,6 +1,6 @@
 import unittest
 
-from util import *
+from thecode import *
 
 
 class Test64(unittest.TestCase):

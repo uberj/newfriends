@@ -165,3 +165,16 @@ def realistic_letter_distribution(candidate:BA) -> float:
 			score += 1/t
 
 	return score / len(uniq_chars)
+
+
+def hamming_weight(a, b):
+	return (a ^ b).count(True)
+
+
+def xor_cycle_encrypt(key:BA, m:BA) -> BA:
+	e = key * math.ceil(float(len(m))/len(key))
+	e = e[:len(m)]
+
+	assert len(e) == len(m)
+
+	return e ^ m
