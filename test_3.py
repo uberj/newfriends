@@ -49,21 +49,32 @@ def to_str(candidate: BA) -> str:
 
 def find_best_message(e:BA) -> str:
 	scores = []
-	for c in [chr(i) for i in range(256)]:
+	for c in map(chr, range(256)):
 		i = ord(c)
-		key = BA(hex(i)) * int((len(e) / 8))
+		key = BA(hex(i) * len(e.bytes))
 		if len(key) < len(e):
 			key = key * 2
+		if i == 88:
+			print("Best key:" + str(key))
 		candidate = (e ^ key)
 
-		scores.append((dictionary_word_count(candidate), to_str(candidate)))
+		scores.append((dictionary_word_count(candidate), c, to_str(candidate)))
 
-	return sorted(scores, key=lambda x: x[0])[-1][1]
+	best = sorted(scores, key=lambda x: x[0])[-1]
+	print(ord(best[1]))
+	return best[2]
 
 
 class Test64(unittest.TestCase):
-	def test_simple_zeros(self):
+	def test_decrypt(self):
 		# I guess assume these people are thinking in C
 		# Single char is 1 byte (8 bit)
 		e = BA("0x1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736")
 		self.assertEqual("Cooking MC's like a pound of bacon", find_best_message(e))
+
+		d0 = BA(hex(ord('k')) * len(e.bytes))
+		print((e ^ d0).hex)
+
+		key = find_best_key(e)
+		d = BA(hex(ord(key)) * len(e.bytes))
+		self.assertEqual("Cooking MC's like a pound of bacon", to_str(e ^ d))

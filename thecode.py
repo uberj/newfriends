@@ -1,36 +1,127 @@
 import string
+from pprint import pprint
 import math
 
 from bitstring import BitArray as BA
 
+SAMPLE_TEXT = """
+Yo, VIP, let's kick it!
 
-LETTER_FREQ = {
-	"a": 8.167,
-	"b": 1.492,
-	"c": 2.782,
-	"d": 4.253,
-	"e": 12.702,
-	"f": 2.228,
-	"g": 2.015,
-	"h": 6.094,
-	"i": 6.966,
-	"j": 0.153,
-	"k": 0.772,
-	"l": 4.025,
-	"m": 2.406,
-	"n": 6.749,
-	"o": 7.507,
-	"p": 1.929,
-	"q": 0.095,
-	"r": 5.987,
-	"s": 6.327,
-	"t": 9.056,
-	"u": 2.758,
-	"v": 0.978,
-	"w": 2.360,
-	"x": 0.150,
-	"y": 1.974
-}
+Ice Ice Baby, Ice Ice Baby
+
+All right stop, Collaborate and listen
+Ice is back with my brand new invention
+Something grabs a hold of me tightly
+Flow like a harpoon daily and nightly
+Will it ever stop? Yo, I don't know
+Turn off the lights and I'll glow
+To the extreme I rock a mic like a vandal
+Light up a stage and wax a chump like a candle.
+
+Dance, go rush the speaker that booms
+I'm killing your brain like a poisonous mushroom
+Deadly, when I play a dope melody
+Anything less than the best is a felony
+Love it or leave it, you better gain way
+You better hit bull's eye, the kid don't play
+
+If there was a problem, yo, I'll solve it
+Check out the hook while my DJ revolves it
+
+Ice Ice Baby Vanilla, Ice Ice Baby Vanilla
+Ice Ice Baby Vanilla, Ice Ice Baby Vanilla
+
+Now that the party is jumping
+With the bass kicked in, and the Vegas are pumpin'
+Quick to the point, to the point, no faking
+Cooking MCs like a pound of bacon
+Burning them they ain't quick and nimble
+I go crazy when I hear a cymbal
+And a hi hat with a souped up tempo
+I'm on a roll and it's time to go solo
+Rollin' in my 5.0
+With my ragtop down so my hair can blow
+The girlies on standby, waving just to say, "Hi!"
+Did you stop? No, I just drove by
+Kept on pursuing to the next stop
+I busted a left and I'm heading to the next block
+That block was dead Yo
+So I continued to A1A Beachfront Ave.
+
+Girls were hot wearing less than bikinis
+Rockman lovers driving Lamborghinis
+Jealous 'cause I'm out getting mine
+Shay with a gauge and Vanilla with a nine
+Ready for the chumps on the wall
+The chumps acting ill because they're so full of "Eight Ball"
+Gunshots ranged out like a bell
+I grabbed my nine, all I heard was shells
+Falling on the concrete real fast
+Jumped in my car, slammed on the gas
+Bumper to bumper, the avenue's packed
+I'm trying to get away before the jackers jack
+Police on the scene, you know what I mean
+They passed me up, confronted all the dope fiends
+
+If there was a problem, yo, I'll solve it
+Check out the hook while my DJ revolves it
+
+Ice Ice Baby Vanilla, Ice Ice Baby Vanilla
+Ice Ice Baby Vanilla, Ice Ice Baby Vanilla
+
+Take heed, 'cause I'm a lyrical poet
+Miami's on the scene just in case you didn't know it
+My town, that created all the bass sound
+Enough to shake and kick holes in the ground
+'Cause my style's like a chemical spill
+Feasible rhymes that you can vision and feel
+Conducted and formed, this is a hell of a concept
+We make it hype and you want to step with this
+Shay plays on the fade, slice like a ninja
+Cut like a razor blade so fast, other DJs say, "Damn."
+If my rhyme was a drug, I'd sell it by the gram
+Keep my composure when it's time to get loose
+Magnetized by the mic while I kick my juice
+
+If there was a problem, Yo, I'll solve it!
+Check out the hook while D-Shay revolves it.
+
+Ice Ice Baby Vanilla, Ice Ice Baby Vanilla
+Ice Ice Baby Vanilla, Ice Ice Baby Vanilla
+
+Yo, man, let's get out of here! Word to your mother!
+
+Ice Ice Baby Too cold, Ice Ice Baby Too cold Too cold
+Ice Ice Baby Too cold Too cold, Ice Ice Baby Too cold Too cold
+"""
+
+LETTER_FREQ = {'\n': 2.8952504879635654, 'y': 2.6675341574495772, 'o': 5.823031880286272, ',': 1.398828887443071,
+               ' ': 17.56668835393624, 'v': 1.1711125569290826, 'i': 6.701366297983085, 'p': 1.5289525048796355,
+               'l': 4.912166558230319, 'e': 8.295380611581002, 't': 5.790500975927131, "'": 0.9433962264150944,
+               's': 3.610930383864672, 'k': 1.5289525048796355, 'c': 3.4482758620689653, '!': 0.16265452179570591,
+               'b': 2.47234873129473, 'a': 6.701366297983085, 'r': 2.504879635653871, 'g': 1.594014313597918,
+               'h': 3.610930383864672, 'n': 4.4567338972023425, 'd': 2.5699414443721533, 'w': 1.3662979830839297,
+               'm': 2.147039687703318, 'f': 0.9108653220559532, '?': 0.06506180871828238, 'u': 1.951854261548471,
+               'x': 0.13012361743656475, '.': 0.16265452179570591, 'j': 0.4229017566688354, 'q': 0.06506180871828238,
+               'z': 0.09759271307742355, '5': 0.03253090435914119, '0': 0.03253090435914119, '"': 0.1951854261548471,
+               '1': 0.03253090435914119, '-': 0.03253090435914119}
+# LETTER_FREQ = {'\n': 2.8952504879635654, 'Y': 0.1951854261548471, 'o': 5.823031880286272, ',': 1.398828887443071,
+#                ' ': 17.56668835393624, 'V': 0.48796356538711777, 'I': 2.114508783344177, 'P': 0.06506180871828238,
+#                'l': 4.814573845152895, 'e': 8.230318802862719, 't': 5.3350683148991545, "'": 0.9433962264150944,
+#                's': 3.4482758620689653, 'k': 1.4638906961613531, 'i': 4.586857514638907, 'c': 3.155497722836695,
+#                '!': 0.16265452179570591, 'B': 0.715679895901106, 'a': 6.506180871828236, 'b': 1.756668835393624,
+#                'y': 2.47234873129473, 'A': 0.1951854261548471, 'r': 2.4072869225764477, 'g': 1.5289525048796355,
+#                'h': 3.5783994795055305, 'p': 1.4638906961613531, 'C': 0.29277813923227064, 'n': 4.39167208848406,
+#                'd': 2.309694209499024, 'w': 1.2036434612882239, 'm': 2.0169160702667535, 'v': 0.6831489915419648,
+#                'S': 0.16265452179570591, 'f': 0.8132726089785295, 'F': 0.09759271307742355, 'W': 0.16265452179570591,
+#                '?': 0.06506180871828238, 'T': 0.4554326610279766, 'u': 1.951854261548471, 'x': 0.13012361743656475,
+#                'L': 0.09759271307742355, '.': 0.16265452179570591, 'D': 0.2602472348731295, 'J': 0.16265452179570591,
+#                'N': 0.06506180871828238, 'j': 0.2602472348731295, 'Q': 0.03253090435914119, 'M': 0.13012361743656475,
+#                'q': 0.03253090435914119, 'z': 0.09759271307742355, 'R': 0.09759271307742355, '5': 0.03253090435914119,
+#                '0': 0.03253090435914119, '"': 0.1951854261548471, 'H': 0.03253090435914119, 'K': 0.06506180871828238,
+#                '1': 0.03253090435914119, 'G': 0.06506180871828238, 'E': 0.06506180871828238, '-': 0.03253090435914119}
+# LETTER_FREQ = { "a": 8.167, "b": 1.492, "c": 2.782, "d": 4.253, "e": 12.702, "f": 2.228, "g": 2.015, "h": 6.094, "i": 6.966, "j": 0.153, "k": 0.772, "l": 4.025, "m": 2.406, "n": 6.749, "o": 7.507, "p": 1.929, "q": 0.095, "r": 5.987, "s": 6.327, "t": 9.056, "u": 2.758, "v": 0.978, "w": 2.360, "x": 0.150, "y": 1.974 }
+
 
 ALL_CHARS_BASE64 = list(string.ascii_uppercase) \
                    + list(string.ascii_lowercase) \
@@ -38,16 +129,19 @@ ALL_CHARS_BASE64 = list(string.ascii_uppercase) \
                    + ["+", "/"]
 
 
-def ints_to_hex(ints:[int]) -> str:
+def ints_to_hex(ints: [int]) -> str:
 	s = ""
 	for i in ints:
 		s += hex(i)[2:].rjust(4, "0")
 	return s
 
+
 """
 Converts hex "abcde" -> 32-bit-numbers [32, 23, 34]
 """
-def hex_to_ints(hex_s:str) -> [int]:
+
+
+def hex_to_ints(hex_s: str) -> [int]:
 	if len(hex_s) % 2 == 1:
 		hex_s = "0" + hex_s
 	cur = 0
@@ -69,7 +163,7 @@ def hex_to_ints(hex_s:str) -> [int]:
 	return ns
 
 
-def int_to_sextet(tb:int) -> [int]:
+def int_to_sextet(tb: int) -> [int]:
 	f3 = tb & 63
 	tb = tb >> 6
 	f2 = tb & 63
@@ -80,7 +174,7 @@ def int_to_sextet(tb:int) -> [int]:
 	return [f0, f1, f2, f3]
 
 
-def hex_to_base64(hex_s:str) -> str:
+def hex_to_base64(hex_s: str) -> str:
 	s = ""
 	ints = hex_to_ints(hex_s)
 	for i in ints:
@@ -105,7 +199,9 @@ def zip_bytes(buff0, buff1, default=0) -> [(int, int)]:
 """
 xor two lists streams of ints
 """
-def xor(buff0:[int], buff1:[int]) -> [int]:
+
+
+def xor(buff0: [int], buff1: [int]) -> [int]:
 	r = []
 	for i0, i1 in zip_bytes(buff0, buff1):
 		r.append(i0 ^ i1)
@@ -120,7 +216,7 @@ def word_dictionary():
 WORD_DICTIONARY = word_dictionary()
 
 
-def dictionary_word_count(candidate:BA):
+def dictionary_word_count(candidate: BA):
 	s = to_str(candidate)
 	count = 0
 	split = s.split(" ")
@@ -134,17 +230,18 @@ def to_str(candidate: BA) -> str:
 	return "".join([chr(b) for b in candidate.bytes])
 
 
-def str_to_ba(i:str) -> BA:
-	h = "0x"
-	for c in i:
-		h += hex(ord(c))
-	return BA(h)
+def str_to_ba(i: str) -> BA:
+	return BA(i.encode())
+	# h = "0x"
+	# for c in i:
+	# 	h += hex(ord(c))
+	# return BA(h)
 
 
 VALID_LETTERS = set(string.ascii_letters)
 
 
-def valid_letter_count_percentage(candidate:BA) -> float:
+def valid_letter_count_percentage(candidate: BA) -> float:
 	count = 0
 	for c in candidate.bytes:
 		if chr(c) in VALID_LETTERS:
@@ -152,17 +249,35 @@ def valid_letter_count_percentage(candidate:BA) -> float:
 	return float(count) / len(candidate.bytes)
 
 
-def realistic_letter_distribution(candidate:BA) -> float:
-	s = to_str(candidate).lower()
+def pad8(candidate: BA) -> BA:
+	hangover = 8 - (len(candidate) % 8)
+	if hangover != 8:
+		candidate += BA("0x0") * (hangover / 4)
+	return candidate
 
+
+def realistic_letter_distribution(candidate: BA) -> float:
+	# pad candidate to get to a byte valid string so we can convert it
+	candidate = pad8(candidate)
+	s = to_str(candidate).lower()
+	return realistic_letter_distribution_(s)
+
+
+def realistic_letter_distribution_(s: str) -> float:
 	score = 0
 	uniq_chars = set(s)
 	for c in uniq_chars:
+		# number of times c appears in s
 		num_c_in_s = len(list(filter(lambda x: x == c, s)))
+
+		# frequency of c in s
 		p_c = (num_c_in_s / len(s)) * 100
+
 		if c in LETTER_FREQ:
-			t = math.fabs(LETTER_FREQ.get(c) - p_c)
-			score += 1/t
+			error = math.fabs(LETTER_FREQ.get(c) - p_c * 10)
+			score -= error
+		else:
+			score -= 300
 
 	return score / len(uniq_chars)
 
@@ -171,10 +286,120 @@ def hamming_weight(a, b):
 	return (a ^ b).count(True)
 
 
-def xor_cycle_encrypt(key:BA, m:BA) -> BA:
-	e = key * math.ceil(float(len(m))/len(key))
+def xor_cycle_encrypt(key: BA, m: BA) -> BA:
+	e = key * math.ceil(float(len(m)) / len(key))
 	e = e[:len(m)]
 
 	assert len(e) == len(m)
 
 	return e ^ m
+
+
+def find_best_key(e: BA) -> chr:
+	scores = []
+	for c in map(chr, range(256)):
+		i = ord(c)
+		ks = int((len(e) / 8))
+		key = BA(hex(i)) * ks
+		if len(key) < len(e):
+			key = key * 2
+
+		assert len(key) == len(e), "len(key)=%s len(e)=%s" % (len(key), len(e))
+		candidate = (e ^ key)
+
+		scores.append((realistic_letter_distribution(candidate), c))
+
+	best = sorted(scores, key=lambda x: x[0])
+	pprint(best)
+	return best[-1][1]
+
+
+def top_n_decrypt_key(n: int, e: BA) -> [(int, chr, str)]:
+	scores = attempt_all_keys(e)
+	l = list(reversed(sorted(scores, key=lambda x: x[0])))
+	return l[:n]
+
+
+def best_decrypt_key(e: BA) -> (int, chr, str):
+	scores = attempt_all_keys(e)
+	l = list(reversed(sorted(scores, key=lambda x: x[0])))
+	return l[0]
+
+
+def attempt_all_keys(e: BA) -> [(int, chr, str, BA)]:
+	scores = []
+	e = pad8(e)
+	for i in range(256):
+		if i < 16:
+			key = BA(hex(i) * int(len(e) / float(4)))
+		else:
+			key = BA(hex(i) * int(len(e) / float(8)))
+
+		if len(key) != len(e):
+			print(len(key))
+			print(len(e))
+			print("here")
+		candidate = (e ^ key)
+
+		scores.append((realistic_letter_distribution(candidate), chr(i), to_str(candidate), candidate, e))
+	# scores.append((dictionary_word_count(candidate), chr(i), to_str(candidate), e))
+
+	return scores
+
+
+def top_n_key_sizes(n: int, e: BA) -> [(int, int)]:
+	distances = []
+	for guess_key_size in range(1, 20):
+		b0 = BA(e.bytes[0:guess_key_size])
+		b1 = BA(e.bytes[guess_key_size:guess_key_size * 2])
+		b2 = BA(e.bytes[guess_key_size * 2:guess_key_size * 3])
+		b3 = BA(e.bytes[guess_key_size * 3:guess_key_size * 4])
+		b4 = BA(e.bytes[guess_key_size * 4:guess_key_size * 5])
+		b5 = BA(e.bytes[guess_key_size * 5:guess_key_size * 6])
+
+		if len(set(map(len, [b0, b1, b2, b3, b4, b5]))) > 1:
+			continue
+		ba0 = BA(b0)
+		ba1 = BA(b1)
+		# distance = hamming_weight(ba0, ba1) / float(guess_key_size)
+		distance0 = hamming_weight(b0, b1) / float(guess_key_size * 8)
+		distance1 = hamming_weight(b1, b2) / float(guess_key_size * 8)
+		distance2 = hamming_weight(b2, b3) / float(guess_key_size * 8)
+		distance3 = hamming_weight(b3, b4) / float(guess_key_size * 8)
+		distance4 = hamming_weight(b4, b5) / float(guess_key_size * 8)
+
+		distance = (distance0 + distance1 + distance2 + distance3 + distance4) / 5
+		distances.append((guess_key_size, distance))
+
+	return list(sorted(distances, key=lambda x: x[1]))[:n]
+
+
+def bytes_to_ba(bs:[int]) -> BA:
+	l = []
+	for b in bs:
+		if b == 0:
+			l.append("0x00")
+		if b < 15:
+			l.append("0x0" + hex(b))
+		else:
+			l.append(hex(b))
+	i = map(lambda s: s[2:], l)
+	s = "0x" + "".join(i)
+	return BA(s)
+
+
+def transpose(e:BA, ks:int) -> [BA]:
+	blocks = []
+	for i in range(ks):
+		ith_blocks = []
+		for j in range(i, len(e.bytes), ks):
+			b = e.bytes[j]
+			ith_blocks.append(b)
+
+		# Blocks need to line up to be dividable by 8 eventually
+		# if len(ith_blocks) % 4:
+		# 	ith_blocks.append(0)
+
+		ba = bytes_to_ba(ith_blocks)
+		blocks.append(ba)
+	return blocks

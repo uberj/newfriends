@@ -6,33 +6,60 @@ from thecode import *
 from bitstring import BitArray as BA
 
 
-def best_decrypt_key(e:BA) -> (int, chr, str):
-	scores = attempt_all_keys(e)
-	l = list(reversed(sorted(scores, key=lambda x: x[0])))
-	return l[0]
-
-
-def attempt_all_keys(e:BA) -> [(int, chr, str)]:
-	scores = []
-	for i in range(256):
-		key = BA(hex(i)) * int((len(e) / 8))
-		if len(key) < len(e):
-			key = key * 2
-		candidate = (e ^ key)
-
-		scores.append((realistic_letter_distribution(candidate), chr(i), to_str(candidate)))
-
-	return scores
-
 
 class Test64(unittest.TestCase):
 	def test_letter_distribution(self):
-		ba1 = str_to_ba("He determined to drop his litigation with the monastry, and relinguish his claims to the wood-cuting and fishery rihgts at once. He was the more ready to do this becuase the rights had becom much less valuable, and he had indeed the vaguest idea where the wood and river in quedtion were.")
+		ba1 = BA(b'He determined to drop his litigation with the monastry, and relinguish his claims to the wood-cuting and fishery rihgts at once. He was the more ready to do this becuase the rights had becom much less valuable, and he had indeed the vaguest idea where the wood and river in quedtion were.')
 		s1 = realistic_letter_distribution(ba1)
 
-		ba2 = str_to_ba("kjafjkf adfsjkafdsj 345oislnasdlkj qlktj oqeijg 0340hqi0jwqicdwjiwkpqwop lmknxlmc,zmcj adfi  iu qwpjaljkdfjdslk f.jk.mcvnvcn vndpijpifuw9- kls adlksajm.slksapij dfp- qw jkasjkad djkadsnkvlsadkjaw 9 e2j jadjlkadladfs jklajk ej ;j awefjlkasadjw pjowe ew ipjewji ewj iwejfal kas advpceq qe 9")
+		ba2 = BA(b'kjafjkf adfsjkafdsj 345oislnasdlkj qlktj oqeijg 0340hqi0jwqicdwjiwkpqwop lmknxlmc,zmcj adfi  iu qwpjaljkdfjdslk f.jk.mcvnvcn vndpijpifuw9- kls adlksajm.slksapij dfp- qw jkasjkad djkadsnkvlsadkjaw 9 e2j jadjlkadladfs jklajk ej ;j awefjlkasadjw pjowe ew ipjewji ewj iwejfal kas advpceq qe 9')
 		s2 = realistic_letter_distribution(ba2)
 
+		self.assertTrue(s1 > s2)
+
+	def test_letter_distribution1(self):
+		ba1 = BA(b'Cooking MC\'s like a pound of bacon')
+		s1 = realistic_letter_distribution(ba1)
+
+		ba2 = BA("0x705c5c585a5d54137e701440135f5a5856135213435c465d57135c55135152505c5d")
+		s2 = realistic_letter_distribution(ba2)
+
+		self.assertTrue(s1 > s2)
+
+	def test_letter_distribution2(self):
+		good = BA("0x7b5a4215415d544115415d5015455447414c155c46155f4058455c5b523f")
+		good_decrypted = BA('0x4e6f77207468617420746865207061727479206973206a756d70696e670a')
+		s1 = realistic_letter_distribution(good)
+
+		fake = BA("0x1c3df1135321a8e9241a5607f8305d571aa546001e3254555a11511924")
+		fake_decrypted = BA('0x684985672755dc9d506e22738c4429236ed132746a4620212e65256d50')
+		s2 = realistic_letter_distribution(fake)
+
+		print(s1)
+		print(s2)
+
+		self.assertTrue(s1 > s2)
+
+	def test_letter_distribution3(self):
+		good = 'Now that the party is jumping\n'
+		s1 = realistic_letter_distribution_(good)
+
+		fake = 'hI\x85g\'UÜ\x9dPn"s\x8cD)#nÑ2tjF !.e%mP'
+		s2 = realistic_letter_distribution_(fake)
+
+		print(s1)
+		print(s2)
+		self.assertTrue(s1 > s2)
+
+	def test_letter_distribution4(self):
+		fake = 'th!lhx!o!h!ehmHnsxi!is!lm'
+		s2 = realistic_letter_distribution_(fake)
+
+		good = 'ui miy n i dilIoryh hr ml'
+		s1 = realistic_letter_distribution_(good)
+
+		print(s1)
+		print(s2)
 		self.assertTrue(s1 > s2)
 
 	def test_example(self):
@@ -46,13 +73,9 @@ class Test64(unittest.TestCase):
 				blocks.append(ba)
 
 		for block in blocks:
-			score, key, message = best_decrypt_key(block)
-			scores.append((score, message))
+			scores.append(best_decrypt_key(block))
 
-		# print("Top 20:")
-		# pprint(list(reversed(sorted(scores, key=lambda x: x[0])))[:20])
-		#
-		# print("Best:")
-		# pprint(sorted(scores, key=lambda x: x[0])[-1])
-		best = sorted(scores, key=lambda x: x[0])[-1]
-		self.assertEqual(best[1], "Now that the party is jumping\n")
+		best = list(reversed(sorted(scores, key=lambda x: x[0])))
+		# print("Top 10:")
+		# pprint(best[:10])
+		self.assertEqual(best[0][2], "Now that the party is jumping\n")
