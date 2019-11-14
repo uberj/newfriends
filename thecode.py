@@ -349,26 +349,17 @@ def attempt_all_keys(e: BA) -> [(int, chr, str, BA)]:
 
 def top_n_key_sizes(n: int, e: BA) -> [(int, int)]:
 	distances = []
-	for guess_key_size in range(1, 20):
-		b0 = BA(e.bytes[0:guess_key_size])
-		b1 = BA(e.bytes[guess_key_size:guess_key_size * 2])
-		b2 = BA(e.bytes[guess_key_size * 2:guess_key_size * 3])
-		b3 = BA(e.bytes[guess_key_size * 3:guess_key_size * 4])
-		b4 = BA(e.bytes[guess_key_size * 4:guess_key_size * 5])
-		b5 = BA(e.bytes[guess_key_size * 5:guess_key_size * 6])
-
-		if len(set(map(len, [b0, b1, b2, b3, b4, b5]))) > 1:
+	for guess_key_size in range(1, min(50, len(e.bytes))):
+		bs = list(e.cut(guess_key_size * 8))
+		if not bs or len(bs) == 1:
 			continue
-		ba0 = BA(b0)
-		ba1 = BA(b1)
-		# distance = hamming_weight(ba0, ba1) / float(guess_key_size)
-		distance0 = hamming_weight(b0, b1) / float(guess_key_size * 8)
-		distance1 = hamming_weight(b1, b2) / float(guess_key_size * 8)
-		distance2 = hamming_weight(b2, b3) / float(guess_key_size * 8)
-		distance3 = hamming_weight(b3, b4) / float(guess_key_size * 8)
-		distance4 = hamming_weight(b4, b5) / float(guess_key_size * 8)
+		ds = []
+		for i in range(len(bs) - 1):
+			b0 = bs[i]
+			b1 = bs[i + 1]
+			ds.append(hamming_weight(b0, b1) / float(guess_key_size))
 
-		distance = (distance0 + distance1 + distance2 + distance3 + distance4) / 5
+		distance = sum(ds) / float(len(ds))
 		distances.append((guess_key_size, distance))
 
 	return list(sorted(distances, key=lambda x: x[1]))[:n]

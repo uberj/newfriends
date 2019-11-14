@@ -22,24 +22,25 @@ def xor_encrypt(key_text, ms) -> str:
 	return encrypt.hex
 
 
-def xor_encrypt_ba(key_text: str, ms: str) -> BA:
-	key_ = BA(key_text.encode())
-	encrypt = xor_cycle_encrypt(key_, BA(ms.encode()))
+def xor_encrypt_ba(key_text: bytes, ms: bytes) -> BA:
+	key_ = BA(key_text)
+	encrypt = xor_cycle_encrypt(key_, BA(ms))
 	return encrypt
 
 
 class Test64(unittest.TestCase):
 	def test_example(self):
-		x = "Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal"
-		e = xor_encrypt("ICE", x)
+		x = b'Burning \'em, if you ain\'t quick and nimble\nI go crazy when I hear a cymbal'
+		e = xor_encrypt_ba(b'ICE', x)
 		# a_ = "0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f"
-		a_ =   "0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20930a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f"
+		# a_ =   BA("0x0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20930a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f")
+		a_ =     BA("0x0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f")
 		self.assertEqual(e, a_)
 		t = top_n_key_sizes(20, e)
 		pprint(t)
 
 	def test_end_to_end(self):
-		e = xor_encrypt_ba("ICE", SAMPLE_TEXT)
+		e = xor_encrypt_ba(b'ICE', SAMPLE_TEXT.encode())
 		t = top_n_key_sizes(20, e)
 		pprint(t)
 		# self.assertEqual(t, 3)
