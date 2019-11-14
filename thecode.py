@@ -1,7 +1,7 @@
 import string
-from pprint import pprint
 import math
 
+from pprint import pprint
 from bitstring import BitArray as BA
 
 SAMPLE_TEXT = """
@@ -94,7 +94,6 @@ Yo, man, let's get out of here! Word to your mother!
 Ice Ice Baby Too cold, Ice Ice Baby Too cold Too cold
 Ice Ice Baby Too cold Too cold, Ice Ice Baby Too cold Too cold
 """
-
 LETTER_FREQ = {'\n': 2.8952504879635654, 'y': 2.6675341574495772, 'o': 5.823031880286272, ',': 1.398828887443071,
                ' ': 17.56668835393624, 'v': 1.1711125569290826, 'i': 6.701366297983085, 'p': 1.5289525048796355,
                'l': 4.912166558230319, 'e': 8.295380611581002, 't': 5.790500975927131, "'": 0.9433962264150944,
@@ -105,28 +104,6 @@ LETTER_FREQ = {'\n': 2.8952504879635654, 'y': 2.6675341574495772, 'o': 5.8230318
                'x': 0.13012361743656475, '.': 0.16265452179570591, 'j': 0.4229017566688354, 'q': 0.06506180871828238,
                'z': 0.09759271307742355, '5': 0.03253090435914119, '0': 0.03253090435914119, '"': 0.1951854261548471,
                '1': 0.03253090435914119, '-': 0.03253090435914119}
-# LETTER_FREQ = {'\n': 2.8952504879635654, 'Y': 0.1951854261548471, 'o': 5.823031880286272, ',': 1.398828887443071,
-#                ' ': 17.56668835393624, 'V': 0.48796356538711777, 'I': 2.114508783344177, 'P': 0.06506180871828238,
-#                'l': 4.814573845152895, 'e': 8.230318802862719, 't': 5.3350683148991545, "'": 0.9433962264150944,
-#                's': 3.4482758620689653, 'k': 1.4638906961613531, 'i': 4.586857514638907, 'c': 3.155497722836695,
-#                '!': 0.16265452179570591, 'B': 0.715679895901106, 'a': 6.506180871828236, 'b': 1.756668835393624,
-#                'y': 2.47234873129473, 'A': 0.1951854261548471, 'r': 2.4072869225764477, 'g': 1.5289525048796355,
-#                'h': 3.5783994795055305, 'p': 1.4638906961613531, 'C': 0.29277813923227064, 'n': 4.39167208848406,
-#                'd': 2.309694209499024, 'w': 1.2036434612882239, 'm': 2.0169160702667535, 'v': 0.6831489915419648,
-#                'S': 0.16265452179570591, 'f': 0.8132726089785295, 'F': 0.09759271307742355, 'W': 0.16265452179570591,
-#                '?': 0.06506180871828238, 'T': 0.4554326610279766, 'u': 1.951854261548471, 'x': 0.13012361743656475,
-#                'L': 0.09759271307742355, '.': 0.16265452179570591, 'D': 0.2602472348731295, 'J': 0.16265452179570591,
-#                'N': 0.06506180871828238, 'j': 0.2602472348731295, 'Q': 0.03253090435914119, 'M': 0.13012361743656475,
-#                'q': 0.03253090435914119, 'z': 0.09759271307742355, 'R': 0.09759271307742355, '5': 0.03253090435914119,
-#                '0': 0.03253090435914119, '"': 0.1951854261548471, 'H': 0.03253090435914119, 'K': 0.06506180871828238,
-#                '1': 0.03253090435914119, 'G': 0.06506180871828238, 'E': 0.06506180871828238, '-': 0.03253090435914119}
-# LETTER_FREQ = { "a": 8.167, "b": 1.492, "c": 2.782, "d": 4.253, "e": 12.702, "f": 2.228, "g": 2.015, "h": 6.094, "i": 6.966, "j": 0.153, "k": 0.772, "l": 4.025, "m": 2.406, "n": 6.749, "o": 7.507, "p": 1.929, "q": 0.095, "r": 5.987, "s": 6.327, "t": 9.056, "u": 2.758, "v": 0.978, "w": 2.360, "x": 0.150, "y": 1.974 }
-
-
-ALL_CHARS_BASE64 = list(string.ascii_uppercase) \
-                   + list(string.ascii_lowercase) \
-                   + list(string.digits) \
-                   + ["+", "/"]
 
 
 def ints_to_hex(ints: [int]) -> str:
@@ -134,11 +111,6 @@ def ints_to_hex(ints: [int]) -> str:
 	for i in ints:
 		s += hex(i)[2:].rjust(4, "0")
 	return s
-
-
-"""
-Converts hex "abcde" -> 32-bit-numbers [32, 23, 34]
-"""
 
 
 def hex_to_ints(hex_s: str) -> [int]:
@@ -163,28 +135,6 @@ def hex_to_ints(hex_s: str) -> [int]:
 	return ns
 
 
-def int_to_sextet(tb: int) -> [int]:
-	f3 = tb & 63
-	tb = tb >> 6
-	f2 = tb & 63
-	tb = tb >> 6
-	f1 = tb & 63
-	tb = tb >> 6
-	f0 = tb & 63
-	return [f0, f1, f2, f3]
-
-
-def hex_to_base64(hex_s: str) -> str:
-	s = ""
-	ints = hex_to_ints(hex_s)
-	for i in ints:
-		sextets = int_to_sextet(i)
-		for sext in sextets:
-			s += ALL_CHARS_BASE64[sext]
-
-	return s
-
-
 def zip_bytes(buff0, buff1, default=0) -> [(int, int)]:
 	for i in range(max(len(buff0), len(buff1))):
 		a = default
@@ -194,11 +144,6 @@ def zip_bytes(buff0, buff1, default=0) -> [(int, int)]:
 		if i < len(buff1):
 			b = buff1[i]
 		yield (a, b)
-
-
-"""
-xor two lists streams of ints
-"""
 
 
 def xor(buff0: [int], buff1: [int]) -> [int]:
@@ -232,10 +177,6 @@ def to_str(candidate: BA) -> str:
 
 def str_to_ba(i: str) -> BA:
 	return BA(i.encode())
-	# h = "0x"
-	# for c in i:
-	# 	h += hex(ord(c))
-	# return BA(h)
 
 
 VALID_LETTERS = set(string.ascii_letters)
@@ -329,8 +270,8 @@ def best_decrypt_key(e: BA) -> (int, chr, str):
 def attempt_all_keys(e: BA) -> [(int, chr, str, BA)]:
 	scores = []
 	e = pad8(e)
-	#for i in map(ord, string.ascii_letters):
-	for i in range(1, 256):
+	for i in map(ord, string.ascii_letters):
+	# for i in range(1, 256):
 		if i < 16:
 			key = BA(hex(i) * int(len(e) / float(4)))
 		else:
@@ -361,7 +302,7 @@ def top_n_key_sizes(n: int, e: BA) -> [(int, int)]:
 	return list(sorted(distances, key=lambda x: x[1]))[:n]
 
 
-def bytes_to_ba(bs:[int]) -> BA:
+def bytes_to_ba(bs: [int]) -> BA:
 	l = []
 	for b in bs:
 		if b == 0:
@@ -374,7 +315,8 @@ def bytes_to_ba(bs:[int]) -> BA:
 	s = "0x" + "".join(i)
 	return BA(s)
 
-def transpose(e:BA, ks:int) -> [BA]:
+
+def transpose(e: BA, ks: int) -> [BA]:
 	blocks = []
 	for i in range(ks):
 		ith_blocks = []

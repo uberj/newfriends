@@ -12,6 +12,7 @@ def challenge_input() -> BA:
 		e = fd.read()
 		return b64_to_ba(e)
 
+
 def decrypt_to_str(key, e):
 	return to_str(xor_cycle_encrypt(BA(key.encode()), e))
 
