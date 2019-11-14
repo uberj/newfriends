@@ -1,10 +1,7 @@
 import unittest
-import math
 
-from pprint import pprint
 from thecode import *
 from bitstring import BitArray as BA
-
 
 
 class Test64(unittest.TestCase):
@@ -28,15 +25,10 @@ class Test64(unittest.TestCase):
 
 	def test_letter_distribution2(self):
 		good = BA("0x7b5a4215415d544115415d5015455447414c155c46155f4058455c5b523f")
-		good_decrypted = BA('0x4e6f77207468617420746865207061727479206973206a756d70696e670a')
 		s1 = realistic_letter_distribution(good)
 
 		fake = BA("0x1c3df1135321a8e9241a5607f8305d571aa546001e3254555a11511924")
-		fake_decrypted = BA('0x684985672755dc9d506e22738c4429236ed132746a4620212e65256d50')
 		s2 = realistic_letter_distribution(fake)
-
-		print(s1)
-		print(s2)
 
 		self.assertTrue(s1 > s2)
 
@@ -47,8 +39,6 @@ class Test64(unittest.TestCase):
 		fake = 'hI\x85g\'UÜ\x9dPn"s\x8cD)#nÑ2tjF !.e%mP'
 		s2 = realistic_letter_distribution_(fake)
 
-		print(s1)
-		print(s2)
 		self.assertTrue(s1 > s2)
 
 	def test_letter_distribution4(self):
@@ -58,10 +48,9 @@ class Test64(unittest.TestCase):
 		good = 'ui miy n i dilIoryh hr ml'
 		s1 = realistic_letter_distribution_(good)
 
-		print(s1)
-		print(s2)
 		self.assertTrue(s1 > s2)
 
+	@unittest.SkipTest
 	def test_example(self):
 		# I guess assume these people are thinking in C
 		# Single char is 1 byte (8 bit)
@@ -76,6 +65,4 @@ class Test64(unittest.TestCase):
 			scores.append(best_decrypt_key(block))
 
 		best = list(reversed(sorted(scores, key=lambda x: x[0])))
-		# print("Top 10:")
-		# pprint(best[:10])
 		self.assertEqual(best[0][2], "Now that the party is jumping\n")

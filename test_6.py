@@ -1,25 +1,23 @@
 import unittest
-import base64
-import sys
+from binascii import a2b_base64
 
-from pprint import pprint
 from thecode import *
-import math
 from bitstring import BitArray as BA
 
-#KEY_SIZE = []
-#KEY_SIZE = [3,4,5,6,7,8, 9,10, 11, 12, 13,14,15,16]
-# 9,7,4,3,8,10
-KEY_SIZE = [5,3,6]
+KEY_SIZE = [29]
 
 
 def challenge_input() -> BA:
-	with open("6_back.txt") as fd:
-		#e = "".join(fd.readlines())
+	with open("6.txt") as fd:
 		e = fd.read()
-		decode = base64.b64decode(e)
-		ba = BA("0x" + decode.hex())
-		return ba
+		return b64_to_ba(e)
+
+def decrypt_to_str(key, e):
+	return to_str(xor_cycle_encrypt(BA(key.encode()), e))
+
+
+def b64_to_ba(s) -> BA:
+	return BA(a2b_base64(s))
 
 
 class Test64(unittest.TestCase):
@@ -27,18 +25,6 @@ class Test64(unittest.TestCase):
 		with open("6_back.txt") as fd:
 			# e = "".join(fd.readlines())
 			e = fd.read()
-			new_lines = base64.b64decode(e)
-			ba0 = BA("0x" + new_lines.hex())
-			ba0a = BA(new_lines)
-			no_new_lines = base64.b64decode("".join(e.split("\n")))
-			ba1 = BA("0x" + no_new_lines.hex())
-			ba1a = BA(no_new_lines)
-			self.assertEqual(new_lines, no_new_lines)
-			self.assertEqual(ba0, ba1)
-			self.assertEqual(ba0, ba0a)
-			self.assertEqual(ba0a, ba1a)
-			encoded = base64.b64encode(ba0.hex.encode())
-			self.assertEquals(no_new_lines, encoded)
 
 	def test_best_key_size(self):
 		e = challenge_input()
@@ -47,7 +33,13 @@ class Test64(unittest.TestCase):
 
 	def test_decrypt1(self):
 		e = challenge_input()
-		print(to_str(xor_cycle_encrypt(BA("aecseraia".encode()), e)))
+		for c in string.ascii_lowercase:
+			s = decrypt_to_str("Terminator X: Bring the To" + str(c) + "se", e)
+			if s.startswith("I'm back and I'm ringin'the bell"):
+				print(c)
+				s = decrypt_to_str("Terminator X: Bring the To" + str(c) + "se", e)
+				print(s)
+				break
 
 	def test_solve_for_key(self):
 		e = challenge_input()
@@ -122,6 +114,8 @@ class Test64(unittest.TestCase):
 		for i, b in enumerate(blocks):
 			key += best_decrypt_key(b)[1]
 		self.assertEqual("ICE", key)
+		s = "Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal"
+		self.assertEqual(decrypt_to_str("ICE", a), s)
 
 	def test_hamming_weight2(self):
 		a = BA(b'this is a test')

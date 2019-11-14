@@ -329,7 +329,8 @@ def best_decrypt_key(e: BA) -> (int, chr, str):
 def attempt_all_keys(e: BA) -> [(int, chr, str, BA)]:
 	scores = []
 	e = pad8(e)
-	for i in map(ord, string.ascii_letters):
+	#for i in map(ord, string.ascii_letters):
+	for i in range(1, 256):
 		if i < 16:
 			key = BA(hex(i) * int(len(e) / float(4)))
 		else:
