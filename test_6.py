@@ -7,19 +7,39 @@ from thecode import *
 import math
 from bitstring import BitArray as BA
 
-#KEY_SIZE = [2, 3, 5]
-KEY_SIZE = [5]
+#KEY_SIZE = []
+#KEY_SIZE = [3,4,5,6,7,8, 9,10, 11, 12, 13,14,15,16]
+# 9,7,4,3,8,10
+KEY_SIZE = [5,3,6]
 
 
 def challenge_input() -> BA:
-	with open("6.txt") as fd:
-		e = "".join(fd.readlines())
+	with open("6_back.txt") as fd:
+		#e = "".join(fd.readlines())
+		e = fd.read()
 		decode = base64.b64decode(e)
 		ba = BA("0x" + decode.hex())
 		return ba
 
 
 class Test64(unittest.TestCase):
+	def test_challenge_serialization(self):
+		with open("6_back.txt") as fd:
+			# e = "".join(fd.readlines())
+			e = fd.read()
+			new_lines = base64.b64decode(e)
+			ba0 = BA("0x" + new_lines.hex())
+			ba0a = BA(new_lines)
+			no_new_lines = base64.b64decode("".join(e.split("\n")))
+			ba1 = BA("0x" + no_new_lines.hex())
+			ba1a = BA(no_new_lines)
+			self.assertEqual(new_lines, no_new_lines)
+			self.assertEqual(ba0, ba1)
+			self.assertEqual(ba0, ba0a)
+			self.assertEqual(ba0a, ba1a)
+			encoded = base64.b64encode(ba0.hex.encode())
+			self.assertEquals(no_new_lines, encoded)
+
 	def test_best_key_size(self):
 		e = challenge_input()
 		distances = top_n_key_sizes(30, e)
@@ -27,17 +47,25 @@ class Test64(unittest.TestCase):
 
 	def test_decrypt1(self):
 		e = challenge_input()
-		print(to_str(xor_cycle_encrypt(BA("eo!so".encode()), e)))
+		print(to_str(xor_cycle_encrypt(BA("aecseraia".encode()), e)))
 
 	def test_solve_for_key(self):
 		e = challenge_input()
-		for ks in range(3, 20):
+		keys = []
+		for ks in KEY_SIZE:
 			blocks = transpose(e, ks)
 			key = ""
 			for i, b in enumerate(blocks):
-				map(lambda x: x[1], top_n_decrypt_key(5))
-				key += best_decrypt_key(b)[1]
+				best_keys = top_n_decrypt_key(5, b)
+				key += best_keys[0][1]
+				cs = list(map(lambda x: x[1], best_keys))
+				print(cs)
+			keys.append(key)
 			print("%s: %s" % (ks, key))
+
+		e = challenge_input()
+		for k in keys:
+			print(to_str(xor_cycle_encrypt(BA(k.encode()), e)))
 
 	def test_bytes_to_ba(self):
 		b = BA("0x0000")

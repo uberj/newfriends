@@ -41,14 +41,17 @@ class Test64(unittest.TestCase):
 
 	def test_end_to_end(self):
 		e = xor_encrypt_ba(b'ICE', SAMPLE_TEXT.encode())
+		print(to_str(e))
 		t = top_n_key_sizes(20, e)
 		pprint(t)
 		# self.assertEqual(t, 3)
-		# blocks = transpose(e, 3)
-		# key = ""
-		# for i, b in enumerate(blocks):
-		# 	key += best_decrypt_key(b)[1]
-		# m = to_str(xor_cycle_encrypt(BA(key.encode()), e))
+		blocks = transpose(e, 3)
+		key = ""
+		for i, b in enumerate(blocks):
+			key += best_decrypt_key(b)[1]
+		print(key)
+		m = to_str(xor_cycle_encrypt(BA(key.encode()), e))
+		print(m)
 		# self.assertEqual(m, SAMPLE_TEXT)
 
 

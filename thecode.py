@@ -329,20 +329,15 @@ def best_decrypt_key(e: BA) -> (int, chr, str):
 def attempt_all_keys(e: BA) -> [(int, chr, str, BA)]:
 	scores = []
 	e = pad8(e)
-	for i in range(256):
+	for i in map(ord, string.ascii_letters):
 		if i < 16:
 			key = BA(hex(i) * int(len(e) / float(4)))
 		else:
 			key = BA(hex(i) * int(len(e) / float(8)))
 
-		if len(key) != len(e):
-			print(len(key))
-			print(len(e))
-			print("here")
 		candidate = (e ^ key)
 
 		scores.append((realistic_letter_distribution(candidate), chr(i), to_str(candidate), candidate, e))
-	# scores.append((dictionary_word_count(candidate), chr(i), to_str(candidate), e))
 
 	return scores
 
@@ -370,14 +365,13 @@ def bytes_to_ba(bs:[int]) -> BA:
 	for b in bs:
 		if b == 0:
 			l.append("0x00")
-		if b < 15:
+		elif b < 15:
 			l.append("0x0" + hex(b))
 		else:
 			l.append(hex(b))
 	i = map(lambda s: s[2:], l)
 	s = "0x" + "".join(i)
 	return BA(s)
-
 
 def transpose(e:BA, ks:int) -> [BA]:
 	blocks = []
@@ -386,10 +380,6 @@ def transpose(e:BA, ks:int) -> [BA]:
 		for j in range(i, len(e.bytes), ks):
 			b = e.bytes[j]
 			ith_blocks.append(b)
-
-		# Blocks need to line up to be dividable by 8 eventually
-		# if len(ith_blocks) % 4:
-		# 	ith_blocks.append(0)
 
 		ba = bytes_to_ba(ith_blocks)
 		blocks.append(ba)
