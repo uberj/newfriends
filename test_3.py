@@ -12,8 +12,6 @@ def find_best_message(e:BA) -> str:
 		key = BA(hex(i) * len(e.bytes))
 		if len(key) < len(e):
 			key = key * 2
-		if i == 88:
-			print("Best key:" + str(key))
 		candidate = (e ^ key)
 
 		scores.append((dictionary_word_count(candidate), c, to_str(candidate)))

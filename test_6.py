@@ -27,21 +27,18 @@ class Test64(unittest.TestCase):
 			# e = "".join(fd.readlines())
 			e = fd.read()
 
+	@unittest.SkipTest
 	def test_best_key_size(self):
 		e = challenge_input()
 		distances = top_n_key_sizes(30, e)
 		pprint(distances)
 
+	@unittest.SkipTest
 	def test_decrypt1(self):
 		e = challenge_input()
-		for c in string.ascii_lowercase:
-			s = decrypt_to_str("Terminator X: Bring the To" + str(c) + "se", e)
-			if s.startswith("I'm back and I'm ringin'the bell"):
-				print(c)
-				s = decrypt_to_str("Terminator X: Bring the To" + str(c) + "se", e)
-				print(s)
-				break
+		pprint(decrypt_to_str("Terminator X: Bring the noise", e))
 
+	@unittest.SkipTest
 	def test_solve_for_key(self):
 		e = challenge_input()
 		keys = []

@@ -232,7 +232,6 @@ def xor_cycle_encrypt(key: BA, m: BA) -> BA:
 	e = e[:len(m)]
 
 	assert len(e) == len(m)
-
 	return e ^ m
 
 
@@ -251,7 +250,6 @@ def find_best_key(e: BA) -> chr:
 		scores.append((realistic_letter_distribution(candidate), c))
 
 	best = sorted(scores, key=lambda x: x[0])
-	pprint(best)
 	return best[-1][1]
 
 
@@ -270,8 +268,7 @@ def best_decrypt_key(e: BA) -> (int, chr, str):
 def attempt_all_keys(e: BA) -> [(int, chr, str, BA)]:
 	scores = []
 	e = pad8(e)
-	for i in map(ord, string.ascii_letters):
-	# for i in range(1, 256):
+	for i in range(1, 256):
 		if i < 16:
 			key = BA(hex(i) * int(len(e) / float(4)))
 		else:
