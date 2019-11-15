@@ -22,11 +22,6 @@ def b64_to_ba(s) -> BA:
 
 
 class Test64(unittest.TestCase):
-	def test_challenge_serialization(self):
-		with open("6_back.txt") as fd:
-			# e = "".join(fd.readlines())
-			e = fd.read()
-
 	@unittest.SkipTest
 	def test_best_key_size(self):
 		e = challenge_input()
