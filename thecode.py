@@ -190,10 +190,10 @@ def valid_letter_count_percentage(candidate: BA) -> float:
 	return float(count) / len(candidate.bytes)
 
 
-def pad16s(s: str) -> str:
+def pad_PKCS7(s: str) -> str:
 	hangover = 16 - (len(s) % 16)
 	if hangover != 16:
-		s += " " * hangover
+		s += chr(16) * hangover
 	return s
 
 
