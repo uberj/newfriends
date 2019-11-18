@@ -4,7 +4,7 @@ from Crypto.Cipher import AES
 from binascii import a2b_base64, unhexlify, hexlify
 import os
 
-from thecode import *
+from set1 import *
 from bitstring import BitArray as BA
 ENTRY_SIZE = 160
 

@@ -2,7 +2,7 @@ import unittest
 import sys
 
 from pprint import pprint
-from thecode import *
+from set1 import *
 import math
 from bitstring import BitArray as BA
 

@@ -1,7 +1,7 @@
 import unittest
 import math
 
-from thecode import *
+from set1 import *
 from bitstring import BitArray as BA
 
 
