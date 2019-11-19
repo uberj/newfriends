@@ -145,12 +145,12 @@ def zip_bytes(buff0, buff1, default=0) -> [(int, int)]:
 			b = buff1[i]
 		yield (a, b)
 
+
 def xor(a: bytes, b: bytes) -> bytes:
 	xor_ints = []
 	for ai, bi in zip(a, b):
 		xor_ints.append(ai ^ bi)
 	return bytes(xor_ints)
-
 
 
 def word_dictionary():
