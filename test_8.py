@@ -17,7 +17,7 @@ Ice Ice Baby, Ice Ice Baby
 
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaon
-Something grabs a hold of"""))
+Something grabs a hold of""".encode()).decode())
 	return hexlify(encrypt)
 
 
