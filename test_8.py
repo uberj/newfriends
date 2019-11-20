@@ -61,7 +61,6 @@ class Test64(unittest.TestCase):
 		l = ("low", {'680446590e4b0409': 1, '254cd301ff6445ac': 1, '0600c2f448619076': 1, 'd77bd5afdb4faca9': 1, 'e066c90e0b1d2ec8': 1, 'b73c87aefee39c9a': 1, '911ad9783b4c5af0': 1, '188273d94733c630': 1, 'c5607a6a6049a3a8': 1, '6f0c4320ed3e4451': 1, '7153934a620d860e': 1, '3aca5232da437966': 1, '3757580ee6c3d565': 1, '8d24da8589f7f501': 1, 'f9dccac2653d8f18': 1, '5cb9997432d2bbcc': 1, '616a82c768935f6c': 1, '5e81ad56e4376fe0': 1, '55a984b93dec9bae': 1, '4c59aebb9c202303': 1})
 		self.assertEqual("high", pick_highest_dupe_count([h, l])[0])
 
-
 	def test_generate_encrypted_line_and_find(self):
 		needle = encrypted_needle()
 		haystack = build_haystack()
