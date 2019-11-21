@@ -8,16 +8,15 @@ class CBCCipher(object):
 		self.iv = pad_PKCS7(iv.encode())
 		self.cipher = AES.new(self.key, AES.MODE_ECB)
 
-	def encrypt(self, b: str) -> bytes:
+	def encrypt(self, plaintext: bytes) -> bytes:
 		"""
-		:param b: message to be encrypted
+		:param plaintext: message to be encrypted
 		:return: encrypted byte string
 		"""
-		bs = b.encode()
 		last = self.iv
 		encrypted_chunks = []  # Encrypted chunks
-		for i in range(0, len(pad_PKCS7(bs)), 16):
-			plaintext_block = bs[i:i + 16]
+		for i in range(0, len(pad_PKCS7(plaintext)), 16):
+			plaintext_block = plaintext[i:i + 16]
 			e_chunk = self.cipher.encrypt(xor(last, plaintext_block))
 			encrypted_chunks.append(e_chunk)
 			last = e_chunk

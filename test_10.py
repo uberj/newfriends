@@ -1,7 +1,7 @@
 import unittest
 import string
 
-from set2 import *
+from CBCCipher import *
 from binascii import a2b_base64
 
 
@@ -17,6 +17,6 @@ class TestChallenge10(unittest.TestCase):
 	def test_encrypt_decrypt(self):
 		cipher = CBCCipher("key", "initialization vector")
 		message = string.ascii_letters * 20
-		e = cipher.encrypt(message)
+		e = cipher.encrypt(message.encode())
 		m = cipher.decrypt(e)
 		self.assertEqual(message, m.decode())

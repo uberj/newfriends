@@ -4,6 +4,7 @@ from Crypto.Cipher import AES
 from binascii import a2b_base64, unhexlify, hexlify
 import os
 
+from ecb_util import pick_highest_dupe_count, find_needle
 from set1 import *
 from bitstring import BitArray as BA
 ENTRY_SIZE = 160
@@ -34,25 +35,6 @@ def build_haystack():
 
 def place(needle: str, haystack: [str]):
 	haystack[random.randint(0, len(haystack))] = needle
-
-
-def find_needle(haystack: [str]) -> str:
-	counts = map(lambda s: (s, count_identical_blocks(s)), haystack)
-	return pick_highest_dupe_count(counts)
-
-
-def count_identical_blocks(s):
-	counts = {}
-	for i in range(0, len(s), 16):
-		c = "".join(map(chr, s[i:i+16]))
-		counts.setdefault(c, 0)
-		counts[c] += 1
-	return counts
-
-
-def pick_highest_dupe_count(counts):
-	scounts = list(reversed(sorted(counts, key=lambda c: max(c[1].values()))))
-	return scounts[0]
 
 
 class TestChallenge8(unittest.TestCase):

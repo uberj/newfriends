@@ -1,5 +1,6 @@
 import string
 import math
+import random
 
 from pprint import pprint
 from bitstring import BitArray as BA
@@ -331,3 +332,7 @@ def transpose(e: BA, ks: int) -> [BA]:
 		ba = bytes_to_ba(ith_blocks)
 		blocks.append(ba)
 	return blocks
+
+
+def rand_n_string(n):
+	return "".join([random.choice(string.printable) for _ in range(n)])
