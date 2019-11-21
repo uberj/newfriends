@@ -21,7 +21,7 @@ def b64_to_ba(s) -> BA:
 	return BA(a2b_base64(s))
 
 
-class Test64(unittest.TestCase):
+class TestChallenge6(unittest.TestCase):
 	@unittest.SkipTest
 	def test_best_key_size(self):
 		e = challenge_input()

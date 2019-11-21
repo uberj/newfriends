@@ -20,7 +20,7 @@ def find_best_message(e:BA) -> str:
 	return best[2]
 
 
-class Test64(unittest.TestCase):
+class TestChallenge3(unittest.TestCase):
 	def test_decrypt(self):
 		# I guess assume these people are thinking in C
 		# Single char is 1 byte (8 bit)

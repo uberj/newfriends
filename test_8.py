@@ -55,7 +55,7 @@ def pick_highest_dupe_count(counts):
 	return scounts[0]
 
 
-class Test64(unittest.TestCase):
+class TestChallenge8(unittest.TestCase):
 	def test_pick_highest_dupe_count(self):
 		h = ("high", {'9c0ffed98dacd070': 1, '425bebdb68de6f56': 1, 'a1da151e74743ac2': 1, 'f95a2a504ad1f806': 1, '845373ec2c145f20': 1, 'ca1a9f2c3ab5938f': 1, 'd0bfa219c0f0830b': 1, 'f599b825835f1166': 1, 'da030c17f299c08f': 3, '5f63527b29ed520f': 3, 'fdaff1e2b1fa1cae': 1, 'ffa2cd4cece3dc02': 1, 'accaa77fb250084f': 1, 'bda0c4d973bf68b5': 1, 'c00a9f39ebd60fd4': 1, 'f6347194fc3155c5': 1})
 		l = ("low", {'680446590e4b0409': 1, '254cd301ff6445ac': 1, '0600c2f448619076': 1, 'd77bd5afdb4faca9': 1, 'e066c90e0b1d2ec8': 1, 'b73c87aefee39c9a': 1, '911ad9783b4c5af0': 1, '188273d94733c630': 1, 'c5607a6a6049a3a8': 1, '6f0c4320ed3e4451': 1, '7153934a620d860e': 1, '3aca5232da437966': 1, '3757580ee6c3d565': 1, '8d24da8589f7f501': 1, 'f9dccac2653d8f18': 1, '5cb9997432d2bbcc': 1, '616a82c768935f6c': 1, '5e81ad56e4376fe0': 1, '55a984b93dec9bae': 1, '4c59aebb9c202303': 1})

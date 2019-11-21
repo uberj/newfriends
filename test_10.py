@@ -5,7 +5,7 @@ from set2 import *
 from binascii import a2b_base64
 
 
-class Test64(unittest.TestCase):
+class TestChallenge10(unittest.TestCase):
 	@unittest.SkipTest
 	def test_decrypt_file(self):
 		with open("10.txt", "r") as fd:

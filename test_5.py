@@ -28,7 +28,7 @@ def xor_encrypt_ba(key_text: bytes, ms: bytes) -> BA:
 	return encrypt
 
 
-class Test64(unittest.TestCase):
+class TestChallenge5(unittest.TestCase):
 	def test_example(self):
 		x = b'Burning \'em, if you ain\'t quick and nimble\nI go crazy when I hear a cymbal'
 		e = xor_encrypt_ba(b'ICE', x)

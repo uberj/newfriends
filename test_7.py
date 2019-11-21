@@ -6,7 +6,7 @@ from set1 import *
 from bitstring import BitArray as BA
 
 
-class Test64(unittest.TestCase):
+class TestChallenge7(unittest.TestCase):
 	def test_challenge_serialization(self):
 		with open("7.txt") as fd:
 			e = a2b_base64(fd.read())

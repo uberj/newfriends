@@ -4,7 +4,7 @@ from set1 import *
 from binascii import a2b_hex
 
 
-class Test64(unittest.TestCase):
+class TestChallenge2(unittest.TestCase):
     def test_simple_zeros(self):
         hex_ = a2b_hex("0000")
         xorv = a2b_hex("ffff")

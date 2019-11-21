@@ -4,7 +4,7 @@ from set1 import *
 from bitstring import BitArray as BA
 
 
-class Test64(unittest.TestCase):
+class TestChallenge4(unittest.TestCase):
 	def test_letter_distribution(self):
 		ba1 = BA(b'He determined to drop his litigation with the monastry, and relinguish his claims to the wood-cuting and fishery rihgts at once. He was the more ready to do this becuase the rights had becom much less valuable, and he had indeed the vaguest idea where the wood and river in quedtion were.')
 		s1 = realistic_letter_distribution(ba1)
