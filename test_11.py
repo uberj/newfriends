@@ -1,20 +1,14 @@
 import unittest
 import os
 
-from enum import Enum
 from Crypto.Cipher import AES
 from random import choice, randint
 
 from CBCCipher import CBCCipher
+from oracle import BBoxType, oracle_guess
 from sample_text import text as sample_text
-from set1 import rand_n_string, pad_PKCS7
+from set1 import rand_n_string, pad_PKCS7, xor
 from ecb_util import ordered_block_counts
-
-
-class BBoxType(Enum):
-	ECB = "ECB"
-	CBC = "CBC"
-	RANDOM = "RANDOM"
 
 
 def random_bbox_types():
@@ -28,7 +22,7 @@ class BlackBoxBuilder(object):
 		Build a generator of crypto mystery boxes
 		:param order: stack of block types that can be used for testing (when defined). 0th comes out first
 		"""
-		self.order = list(reversed(order))
+		self.order = order and list(reversed(order))
 
 	def build(self) -> (BBoxType, bytes):
 		prefix = os.urandom(randint(5, 10))
@@ -41,8 +35,6 @@ class BlackBoxBuilder(object):
 		elif bbox_type == BBoxType.CBC:
 			cipher = CBCCipher(rand_n_string(16), rand_n_string(16))
 			box_content = cipher.encrypt(test_data)
-		elif bbox_type == BBoxType.RANDOM:
-			box_content = os.urandom(len(test_data))
 		else:
 			raise NotImplemented("Cannot handle box type: " + str(bbox_type))
 
@@ -51,7 +43,7 @@ class BlackBoxBuilder(object):
 	@staticmethod
 	def test_data() -> bytes:
 		# Make sure there is some duplicate text for now.
-		return (sample_text + "a" * 25 + sample_text).encode()
+		return sample_text.encode()
 
 	def next_bbox_type(self):
 		if not self.order:
@@ -59,10 +51,23 @@ class BlackBoxBuilder(object):
 		else:
 			return self.order.pop()
 
-
-
 class TestChallenge11(unittest.TestCase):
 	def test_ecb_detect(self):
+		bbbuilder = BlackBoxBuilder(order=[BBoxType.ECB])
+		bbtype, mystery_text = bbbuilder.build()
+		guess = oracle_guess(mystery_text)
+		self.assertEqual(guess, BBoxType.ECB)
+
+	def test_cbc_detect(self):
+		bbbuilder = BlackBoxBuilder(order=[BBoxType.CBC])
+		bbtype, mystery_text = bbbuilder.build()
+		guess = oracle_guess(mystery_text)
+		self.assertEqual(guess, BBoxType.CBC)
+
+	def test_cbc_random(self):
 		bbbuilder = BlackBoxBuilder()
-		mystery_text = bbbuilder.build()
-		print(ordered_block_counts(mystery_text))
+		for _ in range(100):
+			bbtype, mystery_text = bbbuilder.build()
+			guess = oracle_guess(mystery_text)
+			self.assertEqual(guess, bbtype)
+
