@@ -36,6 +36,6 @@ def oracle_guess_ecb_block_sizes(mystery_text: bytes) -> [int]:
 			sizes.append((total_dupe_count, potential_block_size))
 
 	# this is broken
-	sorted_counts = list(sorted(sizes, key=lambda dupe_count_x: dupe_count_x[0]))
+	sorted_counts = reversed(sorted(sizes, key=lambda dupe_count_x: dupe_count_x[0]))
 	just_sizes = map(lambda x_block_size: x_block_size[1], sorted_counts)
-	return just_sizes
+	return list(just_sizes)

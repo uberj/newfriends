@@ -25,22 +25,23 @@ def encrypt_(known_text: bytes, unknown_text: bytes) -> bytes:
 
 
 def decrypt_unknown(block_size: int) -> str:
-	plain_text = b''
-	for byte_target in range(block_size - 1, 100):  # not sure how to end it
+	plain_text = ""
+	num_bytes_to_guess = (len(SAMPLE_TEXT) % block_size) * block_size
+	for byte_target in reversed(range(0, num_bytes_to_guess)):
 		oracle_block = b'A' * byte_target
 		e = encrypt(oracle_block)
 		possibles = {}
 		for i in range(255):
-			test_block = oracle_block + chr(i).encode()
+			test_block = oracle_block + plain_text.encode() + chr(i).encode()
 			test_output_block = encrypt(test_block)
-			possibles[test_block] = test_output_block[0:block_size]
+			oracle_input_size = len(test_block)
+			possibles[test_output_block[0:oracle_input_size]] = test_block
 
-		target_block = e[0:block_size]
+		target_block = e[0:len(oracle_block) + len(plain_text.encode()) + 1]
 		ith_byte = possibles[target_block][-1]
-		plain_text += ith_byte
-		break
+		plain_text += chr(ith_byte)
 
-	return plain_text.decode()
+	return plain_text
 
 
 class TestChallenge12(unittest.TestCase):
@@ -54,4 +55,5 @@ class TestChallenge12(unittest.TestCase):
 		best_block_size = sizes[0]
 		self.assertEqual(16, best_block_size)  # We know in this example, so just make sure our code knows
 		plain_text = decrypt_unknown(best_block_size)
+		print(plain_text)
 
