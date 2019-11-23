@@ -5,10 +5,9 @@ from Crypto.Cipher import AES
 from random import choice, randint
 
 from CBCCipher import CBCCipher
-from oracle import BBoxType, oracle_guess
+from oracle import BBoxType, oracle_guess_cipher_type
 from sample_text import text as sample_text
 from set1 import rand_n_string, pad_PKCS7, xor
-from ecb_util import ordered_block_counts
 
 
 def random_bbox_types():
@@ -51,23 +50,24 @@ class BlackBoxBuilder(object):
 		else:
 			return self.order.pop()
 
+
 class TestChallenge11(unittest.TestCase):
 	def test_ecb_detect(self):
 		bbbuilder = BlackBoxBuilder(order=[BBoxType.ECB])
 		bbtype, mystery_text = bbbuilder.build()
-		guess = oracle_guess(mystery_text)
+		guess = oracle_guess_cipher_type(mystery_text)
 		self.assertEqual(guess, BBoxType.ECB)
 
 	def test_cbc_detect(self):
 		bbbuilder = BlackBoxBuilder(order=[BBoxType.CBC])
 		bbtype, mystery_text = bbbuilder.build()
-		guess = oracle_guess(mystery_text)
+		guess = oracle_guess_cipher_type(mystery_text)
 		self.assertEqual(guess, BBoxType.CBC)
 
 	def test_cbc_random(self):
 		bbbuilder = BlackBoxBuilder()
 		for _ in range(100):
 			bbtype, mystery_text = bbbuilder.build()
-			guess = oracle_guess(mystery_text)
+			guess = oracle_guess_cipher_type(mystery_text)
 			self.assertEqual(guess, bbtype)
 
