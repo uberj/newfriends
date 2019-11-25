@@ -86,7 +86,7 @@ class TestChallenge13(unittest.TestCase):
 		self.assertEqual(x, to_dict)
 
 	def test_profile_for(self):
-		self.assertEqual("email=user@admin&uid=10&role=user", profile_for("user@admin"))
+		self.assertEqual(b"email=user@admin&uid=10&role=user", profile_for("user@admin"))
 
 	def test_profile_for_sanitize(self):
-		self.assertEqual("email=user@admin&uid=10&role=user", profile_for("use&r@adm=in"))
+		self.assertEqual(b"email=user@admin&uid=10&role=user", profile_for("use&r@adm=in"))

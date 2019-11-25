@@ -1,5 +1,5 @@
 def find_needle(haystack: [str]) -> str:
-	counts = map(lambda s: (s, count_identical_blocks(s)), haystack)
+	counts = map(lambda s: (s, count_identical_blocks(s, 16)), haystack)
 	return pick_highest_dupe_count(counts)
 
 
