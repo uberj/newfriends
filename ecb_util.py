@@ -3,10 +3,10 @@ def find_needle(haystack: [str]) -> str:
 	return pick_highest_dupe_count(counts)
 
 
-def count_identical_blocks(s: bytes, block_size:int):
+def count_identical_blocks(s: bytes, block_size: int):
 	counts = {}
 	for i in range(0, len(s), block_size):
-		c = "".join(map(chr, s[i:i+block_size]))
+		c = s[i:i+block_size]
 		counts.setdefault(c, 0)
 		counts[c] += 1
 	return counts

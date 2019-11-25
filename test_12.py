@@ -55,5 +55,5 @@ class TestChallenge12(unittest.TestCase):
 		best_block_size = sizes[0]
 		self.assertEqual(16, best_block_size)  # We know in this example, so just make sure our code knows
 		plain_text = decrypt_unknown(best_block_size)
-		print(plain_text)
+		self.assertTrue(plain_text.startswith("Rollin' in my 5.0"))
 
