@@ -57,15 +57,27 @@ class TestChallenge13(unittest.TestCase):
 			email=user@admin
 			&uid=10&role=use
 			r
-		If I pad the username a bit I can get
-			"1234567890123456"
-			"email=userXXX@ad"
-			"min&uid=10&role="
-			"user            "
-		Then, we can use the oracle to 
-
-		:return:
+		If I pad the username a bit I can get (call this paste_target)
+			"email=userXXX@ad" (0:15)
+			"min&uid=10&role=" (16:31)
+			"user            " (32:47)
+		Then, we can use the oracle to create an identity like: (call this copy_target)
+			"email=userXXXXX@" (0:15)
+			"admin           " (16:31) <-- now we reuse this block (copy-and-paste)
+			"&uid=10&role=use" (32:47)
+			"r               " (48:64)
 		"""
+		paste_target = encrypt(profile_for("userXXX@admin"))
+		self.assertTrue(len(paste_target), 48)
+
+		copy_target = encrypt(profile_for("userXXXXX@admin           "))
+		self.assertTrue(len(copy_target), 64)
+
+		fake_profile_bytes = paste_target[0:32] + copy_target[16:32]
+
+		fake_profile_encoded = decrypt(fake_profile_bytes)
+		fake_profile = bytes_to_dict(fake_profile_encoded)
+		self.assertEqual(fake_profile["role"].strip(), "admin")
 
 	def test_structured_string(self):
 		x = {"a": 1, "b": "c"}
