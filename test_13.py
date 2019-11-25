@@ -1,13 +1,13 @@
 import unittest
 from Crypto.Cipher import AES
 
-from set1 import rand_n_string, pad_PKCS7
+from set1 import rand_n_string, pad16_PKCS7
 FIXED_KEY = "YELLOW SUBMARINE"
 cipher = AES.new(FIXED_KEY, AES.MODE_ECB)
 
 
 def encrypt(plain_text: bytes) -> bytes:
-	return cipher.encrypt(pad_PKCS7(plain_text))
+	return cipher.encrypt(pad16_PKCS7(plain_text))
 
 
 def decrypt(cipher_text: bytes) -> bytes:
