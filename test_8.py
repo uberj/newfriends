@@ -12,7 +12,7 @@ ENTRY_SIZE = 160
 
 def encrypted_needle():
 	cipher = AES.new('YELLOW SUBMARINE', AES.MODE_ECB)
-	encrypt = cipher.encrypt(pad_PKCS7("""Yo, VIP, let's kick it!
+	encrypt = cipher.encrypt(pad16_PKCS7("""Yo, VIP, let's kick it!
 
 Ice Ice Baby, Ice Ice Baby
 

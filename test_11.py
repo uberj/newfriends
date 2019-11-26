@@ -7,7 +7,7 @@ from random import choice, randint
 from CBCCipher import CBCCipher
 from oracle import BBoxType, oracle_guess_cipher_type
 from sample_text import text as sample_text
-from set1 import rand_n_string, pad_PKCS7, xor
+from set1 import rand_n_string, pad16_PKCS7, xor
 
 
 def random_bbox_types():
@@ -26,7 +26,7 @@ class BlackBoxBuilder(object):
 	def build(self) -> (BBoxType, bytes):
 		prefix = os.urandom(randint(5, 10))
 		suffix = os.urandom(randint(5, 10))
-		test_data = pad_PKCS7(self.test_data())
+		test_data = pad16_PKCS7(self.test_data())
 		bbox_type = self.next_bbox_type()
 		if bbox_type == BBoxType.ECB:
 			cipher = AES.new(rand_n_string(16), AES.MODE_ECB)
