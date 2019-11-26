@@ -3,9 +3,9 @@ from Crypto.Cipher import AES
 
 
 class CBCCipher(object):
-	def __init__(self, key: str, iv: str):
-		self.key = pad16_PKCS7(key.encode())
-		self.iv = pad16_PKCS7(iv.encode())
+	def __init__(self, key: bytes, iv: bytes):
+		self.key = pad16_PKCS7(key)
+		self.iv = pad16_PKCS7(iv)
 		self.cipher = AES.new(self.key, AES.MODE_ECB)
 
 	def encrypt(self, plaintext: bytes) -> bytes:
