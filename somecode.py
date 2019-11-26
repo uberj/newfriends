@@ -3,6 +3,7 @@ import math
 import random
 
 from pprint import pprint
+# Everything that uses BitArray needs to be removed. I used this early on before I knew about how nice bytes are
 from bitstring import BitArray as BA
 
 SAMPLE_TEXT = """
