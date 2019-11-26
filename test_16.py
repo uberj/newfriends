@@ -15,14 +15,13 @@ def encrypt_data(user_data: bytes) -> bytes:
 		+ user_data.replace(b";", b"").replace(b"=", b"") \
 		+ b";comment2=%20like%20a%20pound%20of%20bacon"
 
-	pkcs_ = pad16_PKCS7(s)
-	return cipher.encrypt(pkcs_)
+	return cipher.encrypt(pad16_PKCS7(s))
 
 
 def check_admin(blob: bytes) -> bool:
 	cipher = CBCCipher(FIXED_KEY, FIXED_IV)
 	decrypt = cipher.decrypt(blob)
-	return b";admin=true;" in decrypt
+	return b";admin=true;" in unpad16_PKCS7(decrypt)
 
 
 class TestChallenge16(unittest.TestCase):
