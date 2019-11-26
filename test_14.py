@@ -69,10 +69,10 @@ def decrypt_unknown(block_size: int, prefix_start: int, prefix_pad_len: int) -> 
 		possibles = {}
 		for i in range(255):
 			test_block = oracle_block + plain_text.encode() + chr(i).encode()
-			test_output_block = oracle_encrypt(prefix_pad + test_block)
+			oracle_output = oracle_encrypt(prefix_pad + test_block)
 			oracle_input_size = len(test_block)
-			size_ = test_output_block[total_prefix_len:total_prefix_len + oracle_input_size]
-			possibles[size_] = test_block
+			test_block_oracle_response = oracle_output[total_prefix_len:total_prefix_len + oracle_input_size]
+			possibles[test_block_oracle_response] = test_block
 
 		target_block = e[total_prefix_len:total_prefix_len + len(oracle_block) + len(plain_text.encode()) + 1]
 		ith_byte = possibles[target_block][-1]
