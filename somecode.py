@@ -198,6 +198,21 @@ def pad16_PKCS7(s: bytes) -> bytes:
 	return s
 
 
+def unpad16_PKCS7(padded: bytes) -> bytes:
+	expected_pad_count = padded[-1]
+	if chr(expected_pad_count) in string.printable:
+		if len(padded) % 16:
+			raise Exception("Bad padding")
+		else:
+			return padded
+
+	expected_pad = (chr(expected_pad_count) * expected_pad_count).encode()
+	if not padded.endswith(expected_pad):
+		raise Exception("Bad padding")
+
+	return padded.rstrip(expected_pad)
+
+
 def pad8(candidate: BA) -> BA:
 	hangover = 8 - (len(candidate) % 8)
 	if hangover != 8:

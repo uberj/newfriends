@@ -7,7 +7,7 @@ from random import choice, randint
 from CBCCipher import CBCCipher
 from oracle import BBoxType, oracle_guess_cipher_type
 from sample_text import text as sample_text
-from set1 import rand_n_string, pad16_PKCS7, xor
+from somecode import rand_n_string, pad16_PKCS7, xor
 
 
 def random_bbox_types():

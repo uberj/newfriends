@@ -5,7 +5,7 @@ from binascii import a2b_base64, unhexlify, hexlify
 import os
 
 from ecb_util import pick_highest_dupe_count, find_needle
-from set1 import *
+from somecode import *
 from bitstring import BitArray as BA
 ENTRY_SIZE = 160
 

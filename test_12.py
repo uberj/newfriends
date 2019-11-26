@@ -3,7 +3,7 @@ import os
 from Crypto.Cipher import AES
 
 from oracle import oracle_guess_cipher_type, BBoxType, oracle_guess_ecb_block_sizes
-from set1 import rand_n_string, pad16_PKCS7
+from somecode import rand_n_string, pad16_PKCS7
 from binascii import a2b_base64
 from sample_text import text as SAMPLE_TEXT
 

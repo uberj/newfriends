@@ -2,7 +2,7 @@ import unittest
 from Crypto.Cipher import AES
 from binascii import a2b_base64
 
-from set1 import *
+from somecode import *
 from bitstring import BitArray as BA
 
 
