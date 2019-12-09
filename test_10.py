@@ -39,7 +39,7 @@ class TestChallenge10(unittest.TestCase):
 			self.assertTrue(cipher.decrypt(ciphertext).startswith(b"I'm back and I'm ringin' the bell \nA rockin' on the mike while the fly girls yell \nIn ecstasy in the b"))
 
 	def test_encrypt_decrypt(self):
-		cipher = CBCCipher("key".encode(), "initialization vector".encode())
+		cipher = CBCCipher("THE TIME IS NOW!".encode(), "initialization vector".encode())
 		message = string.ascii_letters * 20
 		e = cipher.encrypt(message.encode())
 		m = cipher.decrypt(e)

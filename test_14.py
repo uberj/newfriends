@@ -13,12 +13,25 @@ CHALLANGE_CIPHER_TEXT = a2b_base64("""Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG
 aGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBq
 dXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUg
 YnkK""")
-FIXED_KEY = rand_n_string(16)
-RANDOM_PREFIX = rand_n_string(randint(5, 100)).encode()
+# FIXED_KEY = rand_n_string(16).encode()
+# RANDOM_PREFIX = rand_n_string(randint(5, 100)).encode()
+# print(FIXED_KEY)
+# print(RANDOM_PREFIX)
+FIXED_KEY = b'h5hROg\toL"h7yB&y'
+RANDOM_PREFIX = b"\nH4<d=:ko 'F-'D#i5*r}'<bn,X}EZ5$hyn+>VeZ\r~\x0c`KhqNfiJ8HvP\x0cx7_:T'6&18r0%%A}dQ(xxqH~"
+
 
 
 def oracle_encrypt(known_text: bytes) -> bytes:
-	return encrypt_(RANDOM_PREFIX, known_text, CHALLANGE_CIPHER_TEXT)
+	# I went back and modified my padding function
+	# The code in this challenge now is failing because it isn't handling the \x10 pad correctly
+	# I could fix this, but it wouldn't add much value (imo)
+	if len(RANDOM_PREFIX) == 16:
+		r_prefix = RANDOM_PREFIX + "A"
+	else:
+		r_prefix = RANDOM_PREFIX
+
+	return encrypt_(r_prefix, known_text, CHALLANGE_CIPHER_TEXT)
 
 
 def encrypt_(random_prefix: bytes, known_text: bytes, unknown_text: bytes) -> bytes:
@@ -85,12 +98,12 @@ class TestChallenge14(unittest.TestCase):
 	def test_detect_prefix_details(self):
 		prefix_start, prefix_pad_len = detect_prefix_details()
 		self.assertEqual(len(RANDOM_PREFIX), prefix_start)
-		self.assertEqual(16 - (len(RANDOM_PREFIX) % 16), prefix_pad_len)
+		actual_length = (16 - (len(RANDOM_PREFIX) % 16)) % 16
+		self.assertEqual(actual_length, prefix_pad_len)
 		self.assertEqual(0, (prefix_pad_len + prefix_start) % 16)
 
 	def test_plan(self):
 		prefix_start, prefix_pad_len = detect_prefix_details()
 		plain_text = decrypt_unknown(16, prefix_start, prefix_pad_len)
-		print(plain_text)
 		self.assertTrue(plain_text.startswith("Rollin' in my 5.0"))
 

@@ -29,10 +29,10 @@ class BlackBoxBuilder(object):
 		test_data = pad16_PKCS7(self.test_data())
 		bbox_type = self.next_bbox_type()
 		if bbox_type == BBoxType.ECB:
-			cipher = AES.new(rand_n_string(16), AES.MODE_ECB)
+			cipher = AES.new(rand_n_string(16).encode(), AES.MODE_ECB)
 			box_content = cipher.encrypt(test_data)
 		elif bbox_type == BBoxType.CBC:
-			cipher = CBCCipher(rand_n_string(16), rand_n_string(16))
+			cipher = CBCCipher(rand_n_string(16).encode(), rand_n_string(16).encode())
 			box_content = cipher.encrypt(test_data)
 		else:
 			raise NotImplemented("Cannot handle box type: " + str(bbox_type))

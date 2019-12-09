@@ -194,22 +194,23 @@ def valid_letter_count_percentage(candidate: BA) -> float:
 
 def pad16_PKCS7(s: bytes) -> bytes:
 	hangover = 16 - (len(s) % 16)
-	if hangover != 16:
-		s += (chr(16).encode()) * hangover
-	return s
+	return s + (chr(hangover).encode()) * hangover
+
+
+class PaddingException(Exception):
+	pass
 
 
 def unpad16_PKCS7(padded: bytes) -> bytes:
 	expected_pad_count = padded[-1]
-	if chr(expected_pad_count) in string.printable:
-		if len(padded) % 16:
-			raise Exception("Bad padding")
-		else:
-			return padded
+
+	if expected_pad_count > 16:
+		raise PaddingException("Bad padding")
 
 	expected_pad = (chr(expected_pad_count) * expected_pad_count).encode()
+
 	if not padded.endswith(expected_pad):
-		raise Exception("Bad padding")
+		raise PaddingException("Bad padding")
 
 	return padded.rstrip(expected_pad)
 
