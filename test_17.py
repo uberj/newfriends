@@ -114,6 +114,9 @@ def padding_oracle_attack(iv, cipher_text):
 				prev_blocks, cipher_block0, cipher_block1, byte_attack_idx, prev_solutions)
 
 			found_solution = False
+			# A recursive search really would have been more elligant here.
+			# I find that every so often a failure happens with the tests
+			# I think its because I need to explore further than 1 byte with each possible solution
 			for solution in possible_solutions:
 				try:
 					# The last byte doesn't need to check options
