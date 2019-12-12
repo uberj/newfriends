@@ -13,12 +13,8 @@ CHALLANGE_CIPHER_TEXT = a2b_base64("""Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG
 aGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBq
 dXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUg
 YnkK""")
-# FIXED_KEY = rand_n_string(16).encode()
-# RANDOM_PREFIX = rand_n_string(randint(5, 100)).encode()
-# print(FIXED_KEY)
-# print(RANDOM_PREFIX)
-FIXED_KEY = b'h5hROg\toL"h7yB&y'
-RANDOM_PREFIX = b"\nH4<d=:ko 'F-'D#i5*r}'<bn,X}EZ5$hyn+>VeZ\r~\x0c`KhqNfiJ8HvP\x0cx7_:T'6&18r0%%A}dQ(xxqH~"
+FIXED_KEY = rand_n_string(16).encode()
+RANDOM_PREFIX = rand_n_string(randint(5, 100)).encode()
 
 
 
