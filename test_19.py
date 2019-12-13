@@ -110,7 +110,7 @@ def attack(to_attack):
 	return transpose(decrypted_blocks)
 
 
-class TestChallenge19And200(unittest.TestCase):
+class TestChallenge19And20(unittest.TestCase):
 	def test_transpose(self):
 		t = transpose([b'\x01\x02\x03', b'\x01\x02\x03', b'\x01\x02\x03', b'\x01\x02\x03'])
 		self.assertEquals(t[0], b'\x01' * 4)
