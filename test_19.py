@@ -5,7 +5,7 @@ from binascii import a2b_base64
 from bettercode import transpose, frequency_analysis_score
 from somecode import rand_n_string
 
-P_STRINGS = list(map(a2b_base64, [
+CHALLENGE_19_DATA = list(map(a2b_base64, [
 	b'SSBoYXZlIG1ldCB0aGVtIGF0IGNsb3NlIG9mIGRheQ==',
 	b'Q29taW5nIHdpdGggdml2aWQgZmFjZXM=',
 	b'RnJvbSBjb3VudGVyIG9yIGRlc2sgYW1vbmcgZ3JleQ==',
@@ -48,11 +48,20 @@ P_STRINGS = list(map(a2b_base64, [
 	b'QSB0ZXJyaWJsZSBiZWF1dHkgaXMgYm9ybi4=',
 ]))
 
-FIXED_KEY = rand_n_string(16).encode()
-E_STRINGS = []
-for plain in P_STRINGS:
-	ctr = CTRCipher(FIXED_KEY, 0)
-	E_STRINGS.append(ctr.encrypt(plain))
+
+def get_challenge_20_data():
+	with open("20.txt", "r") as fd:
+		for line in fd.readlines():
+			yield a2b_base64(line.strip().encode())
+
+
+def challenge_encrypt(p_strings):
+	fixed_key = rand_n_string(16).encode()
+	e_strings = []
+	for plain in p_strings:
+		ctr = CTRCipher(fixed_key, 0)
+		e_strings.append(ctr.encrypt(plain))
+	return e_strings
 
 
 def simplify_structure(cipher_texts: [bytes]) -> [bytes]:
@@ -84,26 +93,34 @@ def apply_decrypt_byte(decrypt_byte: int, cipher_text: bytes) -> bytes:
 		decrypted.append(b ^ decrypt_byte)
 	return bytes(decrypted)
 
+def attack(to_attack):
+	e_strings = challenge_encrypt(to_attack)
+	cipher_texts = simplify_structure(e_strings)
+	ith_blocks: [bytes] = transpose(cipher_texts)
 
-class TestChallenge19(unittest.TestCase):
+	# figure out the most likely decrypt byte using fre-analysis
+	# decrypt using that byte
+	decrypted_blocks: [bytes] = []
+	for blocks in ith_blocks:
+		best_decrypt_byte = freq_analysis(blocks)
+		decrypted_block = apply_decrypt_byte(best_decrypt_byte, blocks)
+		decrypted_blocks.append(decrypted_block)
+
+	# transpose again to get plain text blocks
+	return transpose(decrypted_blocks)
+
+
+class TestChallenge19And200(unittest.TestCase):
 	def test_transpose(self):
 		t = transpose([b'\x01\x02\x03', b'\x01\x02\x03', b'\x01\x02\x03', b'\x01\x02\x03'])
 		self.assertEquals(t[0], b'\x01' * 4)
 		self.assertEquals(t[1], b'\x02' * 4)
 		self.assertEquals(t[2], b'\x03' * 4)
 
-	def test_decrypt(self):
-		cipher_texts = simplify_structure(E_STRINGS)
-		ith_blocks: [bytes] = transpose(cipher_texts)
+	def test_challenge_19(self):
+		self.assertTrue(b'he, too, has resigne' in attack(CHALLENGE_19_DATA))
 
-		# figure out the most likely decrypt byte using fre-analysis
-		# decrypt using that byte
-		decrypted_blocks: [bytes] = []
-		for blocks in ith_blocks:
-			best_decrypt_byte = freq_analysis(blocks)
-			decrypted_block = apply_decrypt_byte(best_decrypt_byte, blocks)
-			decrypted_blocks.append(decrypted_block)
+	def test_challenge_20(self):
+		# Turns out I did 19 the way 20 was supposed to go
+		self.assertTrue(attack(get_challenge_20_data())[1].startswith(b'cuz I came back'))
 
-		# transpose again to get plain text blocks
-		plaintext_blocks = transpose(decrypted_blocks)
-		self.assertTrue(b'he, too, has resigne' in plaintext_blocks)
