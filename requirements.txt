@@ -1,3 +1,4 @@
 bitstring
 pycrypto
 mypy
+nose2
