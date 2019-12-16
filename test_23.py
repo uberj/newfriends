@@ -1,15 +1,36 @@
 import unittest
 import random
-
-r = random.Random()
-rint = lambda: r.randint(0, 2**32 - 1)
-
 from MersenneTwisterPRNG import MersenneTwisterPRNG
+
+R = random.Random()
+rint = lambda: R.randint(0, 2 ** 32 - 1)
+N = 624
+
+def rebuild_state(prng: MersenneTwisterPRNG) -> [int]:
+	state = []
+	for i in range(N):
+		rn = prng.next()
+		temper = MersenneTwisterPRNG.invert_temper(rn)
+		state.append(temper)
+
+	return state
 
 
 class TestChallenge23(unittest.TestCase):
+	def test_break_the_twister(self):
+		original = MersenneTwisterPRNG(rint())
+		mTState = rebuild_state(original)
+
+		rebuilt = MersenneTwisterPRNG(0)
+		rebuilt.load_state(mTState)
+
+		for i in range(4 * N):
+			original_next = original.next()
+			rebuilt_next = rebuilt.next()
+			self.assertEqual(original_next, rebuilt_next)
+
 	def test_invert_temper(self):
-		prng = MersenneTwisterPRNG(0)
+		prng = MersenneTwisterPRNG(rint())
 		i = rint()
 		temper = prng.temper(i)
 		untemper = prng.invert_temper(temper)

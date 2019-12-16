@@ -1,15 +1,16 @@
 import math
 
 class MersenneTwisterPRNG(object):
+	(w, n, m, r) = (32, 624, 397, 31)
+	a = int("9908B0DF16", 16)
+	(u, d) = (11, int("FFFFFFFF", 16))  # right shift
+	(s, b) = (7, int("9D2C5680", 16))  # Left shift
+	(t, c) = (15, int("EFC60000", 16))  # Left shift
+	l = 18
+	f = 1812433253
+
 	def __init__(self, seed):
 		self.seed = seed
-		(self.w, self.n, self.m, self.r) = (32, 624, 397, 31)
-		self.a = int("9908B0DF16", 16)
-		(self.u, self.d) = (11, int("FFFFFFFF", 16))  # right shift
-		(self.s, self.b) = (7, int("9D2C5680", 16))  # Left shift
-		(self.t, self.c) = (15, int("EFC60000", 16))  # Left shift
-		self.l = 18
-		self.f = 1812433253
 
 		# // Create a length n array to store the state of the generator
 		# int[0..n-1] MT
@@ -46,7 +47,11 @@ class MersenneTwisterPRNG(object):
 				xA = xA ^ self.a
 			# }
 			# MT[i] := MT[(i + m) mod n] xor xA
-			self.mT[i] = self.mT[(i + self.m) % self.n] ^ xA
+			# Wikipedia didn't mention this, but I had to mask out the state var here
+			# In a 32 bit machine this would happen automatically
+			# I'm on a 64 bit machine
+			# I have to make sure my internal representation stays true to the simulation
+			self.mT[i] = (self.mT[(i + self.m) % self.n] ^ xA) & (2**self.w - 1)
 		# }
 		# index := 0
 		self.index = 0
@@ -86,11 +91,16 @@ class MersenneTwisterPRNG(object):
 		y = y ^ (y >> self.l)
 		return y
 
-	def invert_temper(self, y_p):
-		y_p = self.invert_right_shift(y_p, self.l, 2**self.w - 1)
-		y_p = self.invert_left_shift(y_p, self.t, self.c)
-		y_p = self.invert_left_shift(y_p, self.s, self.b)
-		y = self.invert_right_shift(y_p, self.u, self.d)
+	@classmethod
+	def invert_temper(cls, y_p):
+		y_p = cls.invert_right_shift(y_p, cls.l, 2**cls.w - 1)
+		assert len(bin(y_p)) <= 34
+		y_p = cls.invert_left_shift(y_p, cls.t, cls.c)
+		assert len(bin(y_p)) <= 34
+		y_p = cls.invert_left_shift(y_p, cls.s, cls.b)
+		assert len(bin(y_p)) <= 34
+		y = cls.invert_right_shift(y_p, cls.u, cls.d)
+		assert len(bin(y_p)) <= 34
 		return y
 
 	@classmethod
@@ -128,6 +138,11 @@ class MersenneTwisterPRNG(object):
 		y_p, u = (cls.bin_rev(y_p), cls.bin_rev(u))
 		lshift = cls.invert_left_shift(y_p, l, u)
 		return cls.bin_rev(lshift)
+
+	def load_state(self, mTState):
+		assert len(mTState) == self.n
+		self.mT = mTState
+		self.index = self.n
 
 
 
