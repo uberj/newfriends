@@ -4,17 +4,17 @@ class MersenneTwisterPRNG(object):
 		if mode == "32":
 			(self.w, self.n, self.m, self.r) = (32, 624, 397, 31)
 			self.a = int("9908B0DF16", 16)
-			(self.u, self.d) = (11, int("FFFFFFFF16", 16))
-			(self.s, self.b) = (7, int("9D2C568016", 16))
-			(self.t, self.c) = (15, int("EFC6000016", 16))
+			(self.u, self.d) = (11, int("FFFFFFFF", 16))  # right shift
+			(self.s, self.b) = (7, int("9D2C5680", 16))  # Left shift
+			(self.t, self.c) = (15, int("EFC60000", 16))  # Left shift
 			self.l = 18
 			self.f = 1812433253
 		elif mode == "64":
 			(self.w, self.n, self.m, self.r) = (64, 312, 156, 31)
 			self.a = int("B5026F5AA96619E916", 16)
-			(self.u, self.d) = (29, int("555555555555555516", 16))
-			(self.s, self.b) = (17, int("71D67FFFEDA6000016", 16))
-			(self.t, self.c) = (37, int("FFF7EEE00000000016", 16))
+			(self.u, self.d) = (29, int("5555555555555555", 16))
+			(self.s, self.b) = (17, int("71D67FFFEDA60000", 16))
+			(self.t, self.c) = (37, int("FFF7EEE000000000", 16))
 			self.l = 43
 			self.f = 6364136223846793005
 		else:
@@ -77,6 +77,14 @@ class MersenneTwisterPRNG(object):
 
 		# int y := MT[index]
 		y = self.mT[self.index]
+		y = self.temper(y)
+
+		# index := index + 1
+		self.index += 1
+		# return lowest w bits of (y)
+		return (2 ** self.w - 1) & y
+
+	def temper(self, y):
 		# y := y xor ((y >> u) and d)
 		y = y ^ ((y >> self.u) & self.d)
 		# y := y xor ((y << s) and b)
@@ -85,9 +93,56 @@ class MersenneTwisterPRNG(object):
 		y = y ^ ((y << self.t) & self.c)
 		# y := y xor (y >> l)
 		y = y ^ (y >> self.l)
+		return y
 
-		# index := index + 1
-		self.index += 1
-		# return lowest w bits of (y)
-		return (2 ** self.w - 1) & y
+	@classmethod
+	def top_bom_masks(self, l) -> (int, int, int):
+		return (
+			int((32 - (2 * l)) * "1" + l * "0" + l * "0", 2),
+			int((32 - (2 * l)) * "0" + l * "1" + l * "0", 2),
+			int((32 - (2 * l)) * "0" + l * "0" + l * "1", 2),
+		)
+
+	def invert_left_shift(self, y_p:int, l:int, u:int) -> int:
+		"""
+		y_p: y prime.
+		l: left shift value. call
+		u: the bit wise "and" constant
+		# TODO, link to the notes page
+		"""
+		top_a_mask, top_b_mask, bot_y_mask = self.top_bom_masks(l)
+		top_a_y_p, top_b_y_p, bot_y_p = (
+			y_p & top_a_mask,
+			y_p & top_b_mask,
+			y_p & bot_y_mask
+		)
+		print("top_a_y_p: " + bin(top_a_y_p))
+		print("top_b_y_p: ", bin(top_b_y_p))
+		print("bot_y_p: ", bin(bot_y_p))
+		return None
+
+	def invert_temper(self, y):
+		"""
+		u = 11
+		s = 7
+		t = 15
+		:param y:
+		:return:
+		"""
+		# y = y ^ (y >> self.l)
+		# Top is the y shifted l (18) bits. This is the highest 14 bits
+		top14 = y >> self.l
+		bottom_mask = 2 ** (32 - self.l) - 1
+		bottom18 = y & bottom_mask
+		y = (top14 << self.l) + (top14 ^ bottom18)
+
+		# y = y ^ ((y << self.t) & self.c)
+
+		# y = y ^ ((y >> self.u) & self.d)
+
+		# y = y ^ ((y << self.s) & self.b)
+		return y & (2 ** self.w - 1)
+
+
+
 
