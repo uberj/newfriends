@@ -1,24 +1,15 @@
+import math
+
 class MersenneTwisterPRNG(object):
-	def __init__(self, seed, mode="32"):
+	def __init__(self, seed):
 		self.seed = seed
-		if mode == "32":
-			(self.w, self.n, self.m, self.r) = (32, 624, 397, 31)
-			self.a = int("9908B0DF16", 16)
-			(self.u, self.d) = (11, int("FFFFFFFF", 16))  # right shift
-			(self.s, self.b) = (7, int("9D2C5680", 16))  # Left shift
-			(self.t, self.c) = (15, int("EFC60000", 16))  # Left shift
-			self.l = 18
-			self.f = 1812433253
-		elif mode == "64":
-			(self.w, self.n, self.m, self.r) = (64, 312, 156, 31)
-			self.a = int("B5026F5AA96619E916", 16)
-			(self.u, self.d) = (29, int("5555555555555555", 16))
-			(self.s, self.b) = (17, int("71D67FFFEDA60000", 16))
-			(self.t, self.c) = (37, int("FFF7EEE000000000", 16))
-			self.l = 43
-			self.f = 6364136223846793005
-		else:
-			raise RuntimeError("No mode: " + mode)
+		(self.w, self.n, self.m, self.r) = (32, 624, 397, 31)
+		self.a = int("9908B0DF16", 16)
+		(self.u, self.d) = (11, int("FFFFFFFF", 16))  # right shift
+		(self.s, self.b) = (7, int("9D2C5680", 16))  # Left shift
+		(self.t, self.c) = (15, int("EFC60000", 16))  # Left shift
+		self.l = 18
+		self.f = 1812433253
 
 		# // Create a length n array to store the state of the generator
 		# int[0..n-1] MT
@@ -86,23 +77,28 @@ class MersenneTwisterPRNG(object):
 
 	def temper(self, y):
 		# y := y xor ((y >> u) and d)
-		y = y ^ ((y >> self.u) & self.d)
 		# y := y xor ((y << s) and b)
-		y = y ^ ((y << self.s) & self.b)
 		# y := y xor ((y << t) and c)
-		y = y ^ ((y << self.t) & self.c)
 		# y := y xor (y >> l)
+		y = y ^ ((y >> self.u) & self.d)
+		y = y ^ ((y << self.s) & self.b)
+		y = y ^ ((y << self.t) & self.c)
 		y = y ^ (y >> self.l)
 		return y
 
-	@classmethod
-	def top_bom_masks(self, l) -> (int, int, int):
-		return (
-			int((32 - (2 * l)) * "1" + l * "0" + l * "0", 2),
-			int((32 - (2 * l)) * "0" + l * "1" + l * "0", 2),
-			int((32 - (2 * l)) * "0" + l * "0" + l * "1", 2),
-		)
+	def invert_temper(self, y_p):
+		y_p = self.invert_right_shift(y_p, self.l, 2**self.w - 1)
+		y_p = self.invert_left_shift(y_p, self.t, self.c)
+		y_p = self.invert_left_shift(y_p, self.s, self.b)
+		y = self.invert_right_shift(y_p, self.u, self.d)
+		return y
 
+	@classmethod
+	def bit_slice(self, x: int, i: int, l: int):
+		t = "1" * l + "0" * (l * i)
+		return (x & int(t, 2) ) >> (l * i)
+
+	@classmethod
 	def invert_left_shift(self, y_p:int, l:int, u:int) -> int:
 		"""
 		y_p: y prime.
@@ -110,38 +106,28 @@ class MersenneTwisterPRNG(object):
 		u: the bit wise "and" constant
 		# TODO, link to the notes page
 		"""
-		top_a_mask, top_b_mask, bot_y_mask = self.top_bom_masks(l)
-		top_a_y_p, top_b_y_p, bot_y_p = (
-			y_p & top_a_mask,
-			y_p & top_b_mask,
-			y_p & bot_y_mask
-		)
-		print("top_a_y_p: " + bin(top_a_y_p))
-		print("top_b_y_p: ", bin(top_b_y_p))
-		print("bot_y_p: ", bin(bot_y_p))
-		return None
+		y = 0
+		prev_t = 0
+		for i in range(0, math.ceil(32/l)):
+			# i is the starting point for this round
+			# t is the temp variable for this steps result
+			y_p_slice = self.bit_slice(y_p, i, l)
+			u_slice = self.bit_slice(u, i, l)
+			t = y_p_slice ^ (prev_t & u_slice)
+			y += (t << (i * l))
+			prev_t = t
 
-	def invert_temper(self, y):
-		"""
-		u = 11
-		s = 7
-		t = 15
-		:param y:
-		:return:
-		"""
-		# y = y ^ (y >> self.l)
-		# Top is the y shifted l (18) bits. This is the highest 14 bits
-		top14 = y >> self.l
-		bottom_mask = 2 ** (32 - self.l) - 1
-		bottom18 = y & bottom_mask
-		y = (top14 << self.l) + (top14 ^ bottom18)
+		return y & (2**32 - 1)
 
-		# y = y ^ ((y << self.t) & self.c)
+	@classmethod
+	def bin_rev(cls, x):
+		return int("".join(reversed(bin(x)[2:].rjust(32, "0"))), 2)
 
-		# y = y ^ ((y >> self.u) & self.d)
-
-		# y = y ^ ((y << self.s) & self.b)
-		return y & (2 ** self.w - 1)
+	@classmethod
+	def invert_right_shift(cls, y_p, l, u):
+		y_p, u = (cls.bin_rev(y_p), cls.bin_rev(u))
+		lshift = cls.invert_left_shift(y_p, l, u)
+		return cls.bin_rev(lshift)
 
 
 

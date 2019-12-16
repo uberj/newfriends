@@ -1,20 +1,48 @@
 import unittest
-from pprint import pprint
+import random
+
+r = random.Random()
+rint = lambda: r.randint(0, 2**32 - 1)
 
 from MersenneTwisterPRNG import MersenneTwisterPRNG
-import time
 
-def invert_temper(y):
-	pass
 
 class TestChallenge23(unittest.TestCase):
 	def test_invert_temper(self):
 		prng = MersenneTwisterPRNG(0)
-		i = 2 ** 32 - 1
+		i = rint()
 		temper = prng.temper(i)
 		untemper = prng.invert_temper(temper)
-		self.assertEquals(bin(untemper), bin(i))
+		self.assertEqual(bin(untemper), bin(i))
 
-	def test_masks(self):
-		zp = lambda x: (bin(x)[2:]).rjust(32, "0")
-		pprint(list(map(zp, MersenneTwisterPRNG.top_bom_masks(7))))
+	def test_bit_slice(self):
+		x = int("1111" + "0" * 7 + "1" * 7 + "0" * 7 + "1" * 7, 2)
+		self.assertEqual(bin(int("1" * 7, 2)), bin(MersenneTwisterPRNG.bit_slice(x, 0, 7)))
+		self.assertEqual(bin(int("0" * 7, 2)), bin(MersenneTwisterPRNG.bit_slice(x, 1, 7)))
+		self.assertEqual(bin(int("1" * 7, 2)), bin(MersenneTwisterPRNG.bit_slice(x, 2, 7)))
+		self.assertEqual(bin(int("0" * 7, 2)), bin(MersenneTwisterPRNG.bit_slice(x, 3, 7)))
+		self.assertEqual(bin(int("1" * 4, 2)), bin(MersenneTwisterPRNG.bit_slice(x, 4, 7)))
+
+	def test_invert_right_shift_zero_and(self):
+		# y_p = y ^ (y >> l)
+		y = rint()
+		l = 18
+		u = 2 ** 32 - 1
+		y_p = y ^ (y >> l)
+		self.assertEqual(bin(y), bin(MersenneTwisterPRNG.invert_right_shift(y_p, l, u)))
+
+	def test_invert_right_shift(self):
+		# y_p = y ^ ((y >> l) & u)
+		y = random.Random().randint(0, (2 ** 32) - 1)
+		u = int("FFFFFFFF", 16)
+		l = 11
+		y_p = y ^ ((y >> l) & u)
+		self.assertEqual(y, MersenneTwisterPRNG.invert_right_shift(y_p, l, u))
+
+	def test_invert_left_shift(self):
+		# y_p = y ^ ((y << l) & u)
+		y = random.Random().randint(0, (2 ** 32) - 1)
+		u = int("9D2C5680", 16)
+		l = 7
+		y_p = y ^ ((y << l) & u)
+		self.assertEqual(y, MersenneTwisterPRNG.invert_left_shift(y_p, l, u))
