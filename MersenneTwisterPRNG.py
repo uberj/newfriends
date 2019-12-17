@@ -114,7 +114,7 @@ class MersenneTwisterPRNG(object):
 		y_p: y prime.
 		l: left shift value. call
 		u: the bit wise "and" constant
-		# TODO, link to the notes page
+		# See MT_inverse_temper.jpg for whats going on here
 		"""
 		y = 0
 		prev_t = 0
