@@ -1,9 +1,9 @@
 import unittest
-from CTRCipher import CTRCipher
+from cipher.ctr_cipher import CTRCipher
 from binascii import a2b_base64
 
-from bettercode import transpose, frequency_analysis_score
-from somecode import rand_n_string
+from util.bettercode import transpose, frequency_analysis_score
+from util.somecode import rand_n_string
 
 CHALLENGE_19_DATA = list(map(a2b_base64, [
 	b'SSBoYXZlIG1ldCB0aGVtIGF0IGNsb3NlIG9mIGRheQ==',

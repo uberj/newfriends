@@ -1,6 +1,6 @@
 from enum import Enum
 
-from ecb_util import ordered_block_counts
+from util.ecb_util import ordered_block_counts
 
 
 class BBoxType(Enum):

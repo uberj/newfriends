@@ -4,10 +4,10 @@ import os
 from Crypto.Cipher import AES
 from random import choice, randint
 
-from CBCCipher import CBCCipher
-from oracle import BBoxType, oracle_guess_cipher_type
-from sample_text import text as sample_text
-from somecode import rand_n_string, pad16_PKCS7, xor
+from cipher.cbc_cipher import CBCCipher
+from util.oracle import BBoxType, oracle_guess_cipher_type
+from util.sample_text import text as sample_text
+from util.somecode import rand_n_string, pad16_PKCS7
 
 
 def random_bbox_types():

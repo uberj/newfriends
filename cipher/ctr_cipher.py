@@ -1,4 +1,3 @@
-from somecode import pad16_PKCS7, xor
 from Crypto.Cipher import AES
 
 

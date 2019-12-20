@@ -1,6 +1,4 @@
-from MersenneTwisterPRNG import MersenneTwisterPRNG
-from somecode import pad16_PKCS7, xor
-from Crypto.Cipher import AES
+from cipher.MersenneTwisterPRNG import MersenneTwisterPRNG
 
 
 class MersenneTwisterCipher(object):

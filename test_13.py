@@ -1,7 +1,7 @@
 import unittest
 from Crypto.Cipher import AES
 
-from somecode import rand_n_string, pad16_PKCS7
+from util.somecode import pad16_PKCS7
 FIXED_KEY = "YELLOW SUBMARINE"
 cipher = AES.new(FIXED_KEY, AES.MODE_ECB)
 

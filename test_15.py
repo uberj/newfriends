@@ -1,5 +1,5 @@
 import unittest
-from somecode import unpad16_PKCS7, PaddingException, pad16_PKCS7
+from util.somecode import unpad16_PKCS7, PaddingException, pad16_PKCS7
 
 
 class TestChallenge15(unittest.TestCase):

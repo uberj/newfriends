@@ -2,9 +2,6 @@ import unittest
 from Crypto.Cipher import AES
 from binascii import a2b_base64
 
-from somecode import *
-from bitstring import BitArray as BA
-
 
 class TestChallenge7(unittest.TestCase):
 	def test_challenge_serialization(self):

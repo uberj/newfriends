@@ -1,7 +1,7 @@
 import unittest
 import string
 
-from CBCCipher import *
+from cipher.cbc_cipher import *
 from binascii import a2b_base64
 from binascii import a2b_hex
 

@@ -1,7 +1,7 @@
 import unittest
 from binascii import a2b_base64
 
-from somecode import *
+from util.somecode import *
 from bitstring import BitArray as BA
 
 KEY_SIZE = [29]

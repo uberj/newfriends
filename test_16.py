@@ -1,9 +1,7 @@
 import unittest
 
-from Crypto.Cipher import AES
-
-from CBCCipher import CBCCipher
-from somecode import pad16_PKCS7, unpad16_PKCS7, rand_n_string
+from cipher.cbc_cipher import CBCCipher
+from util.somecode import pad16_PKCS7, unpad16_PKCS7, rand_n_string
 
 FIXED_KEY = rand_n_string(16).encode()
 FIXED_IV = rand_n_string(16).encode()

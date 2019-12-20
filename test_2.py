@@ -1,6 +1,6 @@
 import unittest
 
-from somecode import *
+from util.somecode import *
 from binascii import a2b_hex
 
 

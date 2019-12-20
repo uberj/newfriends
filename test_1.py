@@ -1,7 +1,7 @@
 import unittest
 import base64
 
-from somecode import *
+from util.somecode import *
 
 
 class TestChallenge1(unittest.TestCase):

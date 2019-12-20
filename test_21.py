@@ -1,6 +1,6 @@
 import unittest
 
-from MersenneTwisterPRNG import MersenneTwisterPRNG
+from cipher.MersenneTwisterPRNG import MersenneTwisterPRNG
 
 
 class TestChallenge21(unittest.TestCase):

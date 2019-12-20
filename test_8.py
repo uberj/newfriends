@@ -1,12 +1,11 @@
 import unittest
-import random
 from Crypto.Cipher import AES
-from binascii import a2b_base64, unhexlify, hexlify
+from binascii import hexlify
 import os
 
-from ecb_util import pick_highest_dupe_count, find_needle
-from somecode import *
-from bitstring import BitArray as BA
+from util.ecb_util import pick_highest_dupe_count, find_needle
+from util.somecode import *
+
 ENTRY_SIZE = 160
 
 

@@ -1,8 +1,8 @@
 import unittest
 import random
 
-from MersenneTwisterCipher import MersenneTwisterCipher
-from somecode import rand_n_string
+from cipher.MersenneTwisterCipher import MersenneTwisterCipher
+from util.somecode import rand_n_string
 
 R = random.Random()
 rint = lambda: R.randint(0, 2 ** 32 - 1)

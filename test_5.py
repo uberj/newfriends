@@ -1,8 +1,7 @@
 import unittest
 import sys
 
-from pprint import pprint
-from somecode import *
+from util.somecode import *
 import math
 from bitstring import BitArray as BA
 

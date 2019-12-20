@@ -2,8 +2,8 @@ import unittest
 from random import choice
 from binascii import a2b_base64
 
-from CBCCipher import CBCCipher
-from somecode import pad16_PKCS7, unpad16_PKCS7, rand_n_string, PaddingException
+from cipher.cbc_cipher import CBCCipher
+from util.somecode import pad16_PKCS7, unpad16_PKCS7, rand_n_string, PaddingException
 
 FIXED_KEY = rand_n_string(16).encode()
 FIXED_IV = rand_n_string(16).encode()

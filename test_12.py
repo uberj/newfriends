@@ -1,11 +1,10 @@
 import unittest
-import os
 from Crypto.Cipher import AES
 
-from oracle import oracle_guess_cipher_type, BBoxType, oracle_guess_ecb_block_sizes
-from somecode import rand_n_string, pad16_PKCS7
+from util.oracle import oracle_guess_cipher_type, BBoxType, oracle_guess_ecb_block_sizes
+from util.somecode import rand_n_string, pad16_PKCS7
 from binascii import a2b_base64
-from sample_text import text as SAMPLE_TEXT
+from util.sample_text import text as SAMPLE_TEXT
 
 CHALLANGE_CIPHER_TEXT = a2b_base64("""Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkg
 aGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBq
