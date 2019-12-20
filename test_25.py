@@ -1,5 +1,7 @@
 import unittest
 
+from Crypto.Cipher import AES
+
 from util.somecode import rand_n_string
 from cipher.ctr import CTRCipher
 from binascii import a2b_base64
@@ -12,8 +14,9 @@ FIXED_KEY = rand_n_string(16).encode()
 
 def challenge_input() -> bytes:
 	with open("challenge_inputs/25.txt", "r") as fd:
-		return a2b_base64(fd.read())
-
+		e = a2b_base64(fd.read())
+		cipher = AES.new('YELLOW SUBMARINE', AES.MODE_ECB)
+		return cipher.decrypt(e)
 
 
 def moving_windows(block_size, end) -> ((int, int), (int, int)):
@@ -27,12 +30,41 @@ def moving_windows(block_size, end) -> ((int, int), (int, int)):
 	The byte between b and c (X) is what will *not* have an edit
 
 	"""
+	if end % block_size != 0:
+		raise NotImplemented("Not ready for non-aligned input")
+
 	for block_offset in range(0, end, block_size):
-		start_offset = block_offset * block_size
 		for byte_offset in range(16):
-			start = (start_offset, start_offset + byte_offset)
-			end = (start_offset + byte_offset + 1, start_offset + block_size)
+			start = (block_offset, block_offset + byte_offset)
+			end = (block_offset + byte_offset + 1, block_offset + block_size)
 			yield start, end
+
+
+def solve_byte(cipher: CTRCipher, to_attack, window):
+	# unpack window
+	(a, b), (c, d) = window
+
+	# Make our edits so our unknown byte "X" is surrounded by "A"s
+	# i.e. AAAAXAAAAAAAAAA
+	t = b'A' * (b - a)
+	s = cipher.edit(to_attack, a, t)
+	p = b'A' * (d - c)
+	s = cipher.edit(s, c, p)
+
+	s_block = s[a:d]
+
+	# Now slot in "i" into X's spot until we get a match.
+	# When we match, we know "i" == X
+	for i in range(256):
+		possible = bytes([i])
+		r = cipher.edit(s, b, possible)
+		r_block = r[a:d]
+
+		if s_block == r_block:
+			return possible
+
+	raise RuntimeError("Couldn't find byte")
+
 
 
 class TestChallenge25(unittest.TestCase):
@@ -56,6 +88,18 @@ class TestChallenge25(unittest.TestCase):
 		self.assertEqual(((0, 14), (15, 16)), windows[14])
 		self.assertEqual(((0, 15), (16, 16)), windows[15])
 
+	def test_sliding_window_next(self):
+		windows = list(moving_windows(16, 32))
+		self.assertEqual(32, len(windows))
+		self.assertEqual(((0, 0), (1, 16)), windows[0])
+		self.assertEqual(((0, 1), (2, 16)), windows[1])
+		self.assertEqual(((0, 2), (3, 16)), windows[2])
+
+		o = 16
+		self.assertEqual(((o + 0, o + 0), (o + 1, o + 16)), windows[o])
+		self.assertEqual(((o + 0, o + 7), (o + 8, o + 16)), windows[o + 7])
+		self.assertEqual(((o + 0, o + 15), (o + 16, o + 16)), windows[o + 15])
+
 	def test_attack_challenge_input(self):
 		"""
 		This attack is going to work a lot like the CBC attack.
@@ -65,9 +109,13 @@ class TestChallenge25(unittest.TestCase):
 		We'll compute all the possible ciphertexts of the byte we surrounded
 		Then compare to our stored value
 		"""
-		to_attack = challenge_input()
-		for window in moving_windows():
-			print(window)
+		cipher = CTRCipher(key=FIXED_KEY, nonce=0)
+		cipher_text = cipher.encrypt(challenge_input())
+		to_attack = cipher_text[:(16 * int(len(cipher_text) / 16))]
+		plain_text = b''
+		for window in moving_windows(16, len(to_attack)):
+			plain_text += solve_byte(cipher, to_attack, window)
+			print(plain_text)
 
 	def test_edit(self):
 		cipher = CTRCipher(key=FIXED_KEY, nonce=0)
@@ -85,6 +133,8 @@ class TestChallenge25(unittest.TestCase):
 
 			# make the edit
 			edit = cipher.edit(orig, offset, edit_string)
+
+			self.assertNotEqual(edit[offset:len(edit_string)], edit_string)
 
 			# decrypt the edit to see if it worked
 			modified = cipher.decrypt(edit)

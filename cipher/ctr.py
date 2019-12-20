@@ -25,7 +25,7 @@ class CTRCipher(object):
 	def decrypt(self, ciphertext: bytes) -> bytes:
 		return bytes(self._ctr(ciphertext))
 
-	def edit(self, ciphertext: bytes, offset: int, newtext: bytes):
+	def edit(self, ciphertext: bytes, offset: int, newtext: bytes) -> bytes:
 		return bytes(self._edit(ciphertext, offset, newtext))
 
 	def _edit(self, ciphertext: bytes, offset: int, newtext: bytes):
