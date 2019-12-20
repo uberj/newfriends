@@ -113,9 +113,15 @@ class TestChallenge25(unittest.TestCase):
 		cipher_text = cipher.encrypt(challenge_input())
 		to_attack = cipher_text[:(16 * int(len(cipher_text) / 16))]
 		plain_text = b''
+		i = 0
+		known = b"I'm back and I'm ringin' the bell \nA rockin' on the mike while the fly girls yell \nIn ecstasy in the back of"
 		for window in moving_windows(16, len(to_attack)):
 			plain_text += solve_byte(cipher, to_attack, window)
-			print(plain_text)
+			i += 1
+			if i >= len(known):
+				break
+
+		self.assertTrue(plain_text.startswith(known))
 
 	def test_edit(self):
 		cipher = CTRCipher(key=FIXED_KEY, nonce=0)
