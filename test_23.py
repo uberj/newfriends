@@ -1,6 +1,6 @@
 import unittest
 import random
-from cipher.MersenneTwisterPRNG import MersenneTwisterPRNG
+from cipher.mersenne_twister_prng import MersenneTwisterPRNG
 
 R = random.Random()
 rint = lambda: R.randint(0, 2 ** 32 - 1)

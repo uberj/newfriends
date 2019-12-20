@@ -1,5 +1,5 @@
 import unittest
-from cipher.ctr_cipher import CTRCipher
+from cipher.ctr import CTRCipher
 from binascii import a2b_base64
 
 from util.bettercode import transpose, frequency_analysis_score
@@ -50,7 +50,7 @@ CHALLENGE_19_DATA = list(map(a2b_base64, [
 
 
 def get_challenge_20_data():
-	with open("20.txt", "r") as fd:
+	with open("challenge_inputs/20.txt", "r") as fd:
 		for line in fd.readlines():
 			yield a2b_base64(line.strip().encode())
 

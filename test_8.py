@@ -51,6 +51,6 @@ class TestChallenge8(unittest.TestCase):
 
 	@unittest.SkipTest
 	def test_challenge_find_encrypted_line(self):
-		with open("8.txt") as fd:
+		with open("challenge_inputs/8.txt") as fd:
 			hlines = map(lambda s: s.encode(), fd.readlines())
 			pprint(find_needle(hlines)[0])

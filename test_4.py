@@ -56,7 +56,7 @@ class TestChallenge4(unittest.TestCase):
 		# Single char is 1 byte (8 bit)
 		scores = []
 		blocks = []
-		with open("4.txt", "r") as fd:
+		with open("challenge_inputs/4.txt", "r") as fd:
 			for line in fd.readlines():
 				ba = BA("0x" + line.strip())
 				blocks.append(ba)

@@ -1,6 +1,6 @@
 import unittest
 
-from cipher.MersenneTwisterPRNG import MersenneTwisterPRNG
+from cipher.mersenne_twister_prng import MersenneTwisterPRNG
 import time
 import random
 

@@ -1,7 +1,7 @@
 import unittest
 import string
 
-from cipher.cbc_cipher import *
+from cipher.cbc import *
 from binascii import a2b_base64
 from binascii import a2b_hex
 
@@ -32,7 +32,7 @@ class TestChallenge10(unittest.TestCase):
 		self.assertEqual(plaintext, decrypt)
 
 	def test_decrypt_file(self):
-		with open("10.txt", "r") as fd:
+		with open("challenge_inputs/10.txt", "r") as fd:
 			e = "".join(fd.readlines())
 			ciphertext = a2b_base64(e)
 			cipher = CBCCipher("YELLOW SUBMARINE".encode(), b"\x00" * 16)

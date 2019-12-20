@@ -1,5 +1,5 @@
 import unittest
-from cipher.ctr_cipher import CTRCipher
+from cipher.ctr import CTRCipher
 from binascii import a2b_base64
 
 

@@ -1,7 +1,7 @@
 import unittest
 import random
 
-from cipher.MersenneTwisterCipher import MersenneTwisterCipher
+from cipher.mersenne_twister import MersenneTwisterCipher
 from util.somecode import rand_n_string
 
 R = random.Random()

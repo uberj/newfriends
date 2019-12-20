@@ -5,7 +5,7 @@ from binascii import a2b_base64
 
 class TestChallenge7(unittest.TestCase):
 	def test_challenge_serialization(self):
-		with open("7.txt") as fd:
+		with open("challenge_inputs/7.txt") as fd:
 			e = a2b_base64(fd.read())
 			cipher = AES.new('YELLOW SUBMARINE', AES.MODE_ECB)
 			s = cipher.decrypt(e)

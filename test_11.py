@@ -4,7 +4,7 @@ import os
 from Crypto.Cipher import AES
 from random import choice, randint
 
-from cipher.cbc_cipher import CBCCipher
+from cipher.cbc import CBCCipher
 from util.oracle import BBoxType, oracle_guess_cipher_type
 from util.sample_text import text as sample_text
 from util.somecode import rand_n_string, pad16_PKCS7

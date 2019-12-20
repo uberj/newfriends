@@ -1,4 +1,4 @@
-from cipher.MersenneTwisterPRNG import MersenneTwisterPRNG
+from cipher.mersenne_twister_prng import MersenneTwisterPRNG
 
 
 class MersenneTwisterCipher(object):

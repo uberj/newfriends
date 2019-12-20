@@ -8,7 +8,7 @@ KEY_SIZE = [29]
 
 
 def challenge_input() -> BA:
-	with open("6.txt") as fd:
+	with open("challenge_inputs/6.txt") as fd:
 		e = fd.read()
 		return b64_to_ba(e)
 
