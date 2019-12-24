@@ -1,4 +1,6 @@
 import math
+import random
+from crypto.sha1 import sha1
 
 LETTER_FREQ = {
 	'\n': 2.8952504879635654, 'y': 2.6675341574495772, 'o': 5.823031880286272, ',': 1.398828887443071,
@@ -49,3 +51,15 @@ def transpose(xs: [bytes]) -> [bytes]:
 
 	return transposed
 
+
+def seal_sha1(secret:bytes, msg:bytes) -> bytes:
+	return sha1(secret + msg)
+
+
+def confirm_seal_sha1(secret:bytes, seal:bytes, msg:bytes) -> bool:
+	return seal == sha1(secret + msg)
+
+
+def random_word() -> bytes:
+	with open("/usr/share/dict/words", "r") as fd:
+		return random.choice(fd.readlines()).strip().encode()
