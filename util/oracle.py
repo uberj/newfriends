@@ -10,7 +10,7 @@ class BBoxType(Enum):
 
 def oracle_guess_cipher_type(mystery_text: bytes) -> BBoxType:
 	# Check for plain ECB
-	# If block sizes is not zero there were dupes at some block size. Its probably ECB or some other block cipher
+	# If block sizes is not zero there were dupes at some block size. Its probably ECB or some other block crypto
 	sizes = oracle_guess_ecb_block_sizes(mystery_text)
 	if sizes:
 		return BBoxType.ECB

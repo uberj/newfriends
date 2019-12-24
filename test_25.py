@@ -3,7 +3,7 @@ import unittest
 from Crypto.Cipher import AES
 
 from util.somecode import rand_n_string
-from cipher.ctr import CTRCipher
+from crypto.ctr import CTRCipher
 from binascii import a2b_base64
 import string
 import random

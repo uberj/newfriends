@@ -1,6 +1,6 @@
 import unittest
 
-from cipher.ctr import CTRCipher
+from crypto.ctr import CTRCipher
 from util.somecode import rand_n_string
 import random
 

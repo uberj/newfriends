@@ -1,6 +1,6 @@
 import unittest
 
-from cipher.cbc import CBCCipher
+from crypto.cbc import CBCCipher
 from util.somecode import xor
 
 FIXED_KEY = b'K8,zXi^,[rY9u\x0cAk'
