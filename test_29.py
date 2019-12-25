@@ -21,10 +21,6 @@ class TestChallenge29(unittest.TestCase):
 
 		self.assertEqual(s1, s2)
 
-	def test_faker(self):
-		message = b"comment1=cooking%20MCs;userdata=foo;comment2=%20like%20a%20pound%20of%20bacon"
-		s1 = sha1(message)
-
 	def test_forgery(self):
 		secret = random_word()
 		msg_to_attack = b"comment1=cooking%20MCs;userdata=foo;comment2=%20like%20a%20pound%20of%20bacon"

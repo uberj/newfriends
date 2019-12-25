@@ -1,6 +1,7 @@
 import math
 import random
 from crypto.sha1 import sha1
+from crypto.md4 import md4
 
 LETTER_FREQ = {
 	'\n': 2.8952504879635654, 'y': 2.6675341574495772, 'o': 5.823031880286272, ',': 1.398828887443071,
@@ -58,6 +59,14 @@ def seal_sha1(secret:bytes, msg:bytes) -> bytes:
 
 def confirm_seal_sha1(secret:bytes, seal:bytes, msg:bytes) -> bool:
 	return seal == sha1(secret + msg)
+
+def seal_md4(secret:bytes, msg:bytes) -> bytes:
+	return md4(secret + msg)
+
+
+def confirm_seal_md4(secret:bytes, seal:bytes, msg:bytes) -> bool:
+	md_ = md4(secret + msg)
+	return seal == md_
 
 
 def random_word() -> bytes:
