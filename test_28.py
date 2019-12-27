@@ -16,6 +16,7 @@ class TestChallenge28(unittest.TestCase):
 		self.assertFalse(confirm_seal_sha1(secret, seal, b"foobarr"))
 		self.assertTrue(confirm_seal_sha1(secret, seal, b"foobar"))
 
+	@unittest.skip
 	def test_sha1_message_length(self):
 		n_string = rand_n_string(100).encode()
 		h = seal_sha1(random_word(), n_string)

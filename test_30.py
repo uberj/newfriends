@@ -6,7 +6,7 @@ from util.bettercode import seal_md4, random_word, confirm_seal_md4
 from crypto.md4 import md4, md4_restart, md4_pad
 
 
-class TestChallenge29(unittest.TestCase):
+class TestChallenge30(unittest.TestCase):
 	def test_consistent_behavior(self):
 		message = b"comment1=cooking%20MCs;userdata=foo;comment2=%20like%20a%20pound%20of%20bacon"
 		s1 = md4(message)

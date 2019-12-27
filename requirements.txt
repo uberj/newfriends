@@ -2,3 +2,4 @@ bitstring
 pycrypto
 mypy
 nose2
+requests
