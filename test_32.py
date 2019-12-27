@@ -1,5 +1,4 @@
 import unittest
-import string
 import time
 import requests
 import random
@@ -19,6 +18,7 @@ PORT = random.randint(7000, 9000)
 URL = "http://" + HOST + ":" + str(PORT)
 
 SECRET = random_word()
+ARTIFICIAL_DELAY = 0.005
 
 
 def insecure_compare(hmac: bytes, signature: bytes):
@@ -28,7 +28,7 @@ def insecure_compare(hmac: bytes, signature: bytes):
 	for a, b in zip(hmac, signature):
 		if a != b:
 			return False
-		time.sleep(0.05)
+		time.sleep(ARTIFICIAL_DELAY)
 
 	return True
 
@@ -65,7 +65,29 @@ def time_f(f) -> int:
 	return int(time.time_ns() - start)
 
 
-class TestChallenge31(unittest.TestCase):
+def attack_next_byte(signature, filename, sig_length) -> bytes:
+	lows = {}
+	observations = {}
+	sample_size = 11  # Should be odd to make mean easier
+
+	def f():
+		attack_s = (signature + s.encode()).ljust(sig_length, b"\x00")
+		requests.get(URL, params={'file': filename, 'signature': attack_s})
+
+	for s in 'abcdefgh0123456789':
+		for o in range(sample_size):
+			t = time_f(f)
+			observations.setdefault(s, []).append(t)
+
+	for c, timings in observations.items():
+		s_timings = list(sorted(timings))
+		lows[str(c)] = s_timings[0]
+
+	lowest = list(reversed(sorted(lows.items(), key=lambda x: x[1])))[0][0]
+	return lowest.encode()
+
+
+class TestChallenge32(unittest.TestCase):
 	p = None
 
 	@classmethod
@@ -82,23 +104,18 @@ class TestChallenge31(unittest.TestCase):
 	@unittest.skip
 	def test_run_server_make_requests(self):
 		filename = 'root.exe'
+		print(hmac_sha1(SECRET, filename.encode()))
 		# First guess the length
 		sig_length = len(hmac_sha1(b'dummy', b'dummy'))
 		signature = b''
 		for i in range(sig_length):
-			longest = (0, -1)
 			# Attacking the ith byte
-			for s in 'abcdefgh0123456789':
-				def f():
-					attack_s = (signature + s.encode()).ljust(sig_length, b"\x00")
-					requests.get(URL, params={'file': filename, 'signature': attack_s})
-				t = time_f(f)
-				if t > longest[0]:
-					longest = (t, s.encode())
-
-			signature += longest[1]
+			b = attack_next_byte(signature, filename, sig_length)
+			signature += b
 
 		r = requests.get(URL, params={'file': filename, 'signature': signature})
+		print(signature)
+		print(hmac_sha1(SECRET, filename.encode()))
 		self.assertEqual(r.status_code, 200)
 
 	def test_hmac(self):
